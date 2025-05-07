@@ -1,182 +1,560 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SIM Data Lookup</title>
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIM DATA LOOKUP</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       background: #000;
-      font-family: Arial, sans-serif;
+      font-family: 'Courier New', monospace;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      animation: fadeIn 1s ease-in-out;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .matrix-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.15;
+      overflow: hidden;
+    }
+
+    .matrix-column {
+      position: absolute;
+      top: -100%;
+      color: #0f0;
+      font-size: 18px;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      text-shadow: 0 0 5px #0f0;
+      animation: matrix-fall linear infinite;
+    }
+
+    @keyframes matrix-fall {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100vh); }
     }
 
     .box {
-      background: #111;
-      border: 2px solid red;
-      box-shadow: 0 0 25px red;
-      padding: 30px 20px;
-      border-radius: 15px;
-      width: 100%;
-      max-width: 400px;
+      background: rgba(0, 20, 0, 0.8);
+      border: 1px solid #0f0;
+      box-shadow: 0 0 25px #0f0;
+      padding: 25px 20px;
+      border-radius: 5px;
+      width: 90%;
+      max-width: 370px;
       text-align: center;
-      animation: fadeIn 1s ease-in-out;
+      position: relative;
+      z-index: 1;
+    }
+
+    .top-title {
+      color: #0f0;
+      text-shadow: 0 0 10px #0f0;
+      font-size: 16px;
+      margin-bottom: 5px;
+      font-weight: bold;
+      letter-spacing: 2px;
     }
 
     .box h2 {
-      color: red;
-      font-size: 24px;
-      margin-bottom: 20px;
+      color: #0f0;
+      font-size: 20px;
+      margin-bottom: 15px;
+      text-shadow: 0 0 5px #0f0;
+      letter-spacing: 1px;
+    }
+
+    .input-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
     }
 
     .box input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      margin-bottom: 20px;
-      font-size: 16px;
-      background: #333;
-      color: white;
-      box-shadow: inset 0 0 5px red;
+      width: 90%;
+      padding: 10px;
+      border: 1px solid #0f0;
+      background: #000;
+      color: #0f0;
+      box-shadow: inset 0 0 10px #0f0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+
+    .box input::placeholder {
+      color: #0a0;
+      opacity: 0.7;
     }
 
     .box button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      margin: 10px 0;
-      font-size: 16px;
+      width: 90%;
+      padding: 10px;
+      border: 1px solid #0f0;
+      margin: 8px 0;
+      font-size: 14px;
       font-weight: bold;
       cursor: pointer;
-      color: white;
-      background: linear-gradient(90deg, #c00000, #ff0000);
-      box-shadow: 0 0 15px red;
-      transition: 0.3s;
+      color: #000;
+      background: #0f0;
+      box-shadow: 0 0 15px #0f0;
+      font-family: 'Courier New', monospace;
     }
 
     .box button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg, #ff0000, #c00000);
+      transform: scale(1.02);
+      background: #0a0;
+      color: #0f0;
     }
 
     .whatsapp-btn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      text-decoration: none;
-      margin: 10px 0;
-      font-size: 16px;
-      font-weight: bold;
-      background: linear-gradient(90deg, #25D366, #128C7E);
-      box-shadow: 0 0 15px #25D366;
-      color: white;
-      transition: 0.3s;
-    }
-
-    .whatsapp-btn:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg, #128C7E, #25D366);
-    }
-
-    .telegram-btn {
-      background: linear-gradient(90deg, #0088cc, #005577);
-      box-shadow: 0 0 15px #0088cc;
+      background: #25D366;
+      border: 1px solid #25D366;
       color: white;
     }
+#responseBox {
+  color: #0f0;
+  margin-top: 10px;
+  font-size: 13px;
+  display: none;
+  background: rgba(0, 10, 0, 0.4);
+  border: 1px solid #0f0;
+  padding: 10px;
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+  max-height: 250px; /* 👈 limits height */
+  overflow-y: auto;   /* 👈 enables scrolling */
+  scrollbar-width: thin;
+  scrollbar-color: #0f0 transparent;
+}
 
-    #responseBox {
-      color: white;
-      margin-top: 20px;
-      font-size: 16px;
-      display: none;
-      animation: fadeIn 1s ease-in-out;
-      background: #222;
-      border: 1px solid #444;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: left;
+
+    .blink {
+      animation: blink 1s infinite;
     }
 
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .footer {
+      color: #0a0;
+      font-size: 12px;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
+  <div class="matrix-bg" id="matrixBg"><div class="matrix-column" style="left: 0px; animation-duration: 5.17464s; animation-delay: 0.264912s;"> 
+T
+6
+4
+5
+5
+ 
+B
+9
+M
+E
+ 
+H
+</div><div class="matrix-column" style="left: 20px; animation-duration: 7.49338s; animation-delay: 2.32828s;">C
+H
+H
+3
+T
+H
+4
+H
+A
+2
+2
+T
+K
+2
+6
+</div><div class="matrix-column" style="left: 40px; animation-duration: 9.54261s; animation-delay: 3.09604s;">7
+1
+A
+T
+8
+B
+T
+3
+9
+0
+E
+L
+1
+K
+8
+8
+ 
+T
+</div><div class="matrix-column" style="left: 60px; animation-duration: 9.04861s; animation-delay: 4.60383s;">8
+5
+2
+A
+8
+A
+1
+T
+1
+0
+1
+6
+L
+1
+L
+E
+</div><div class="matrix-column" style="left: 80px; animation-duration: 5.86935s; animation-delay: 2.53372s;">E
+8
+4
+A
+T
+B
+L
+9
+6
+6
+6
+M
+0
+A
+L
+</div><div class="matrix-column" style="left: 100px; animation-duration: 5.65146s; animation-delay: 3.11477s;">6
+6
+ 
+C
+A
+A
+K
+7
+5
+T
+5
+T
+0
+</div><div class="matrix-column" style="left: 120px; animation-duration: 5.96913s; animation-delay: 0.828033s;">A
+4
+M
+4
+A
+9
+9
+H
+T
+A
+E
+</div><div class="matrix-column" style="left: 140px; animation-duration: 9.77547s; animation-delay: 0.598676s;">M
+3
+4
+H
+8
+ 
+5
+T
+1
+A
+7
+</div><div class="matrix-column" style="left: 160px; animation-duration: 8.37493s; animation-delay: 2.7304s;">M
+M
+B
+T
+A
+8
+1
+7
+H
+B
+</div><div class="matrix-column" style="left: 180px; animation-duration: 5.93888s; animation-delay: 4.15987s;">T
+C
+5
+A
+8
+5
+K
+T
+1
+6
+2
+E
+4
+8
+A
+</div><div class="matrix-column" style="left: 200px; animation-duration: 6.42646s; animation-delay: 4.79358s;">T
+K
+3
+9
+1
+M
+ 
+ 
+A
+8
+T
+C
+M
+ 
+8
+0
+K
+</div><div class="matrix-column" style="left: 220px; animation-duration: 7.86151s; animation-delay: 3.44818s;">A
+3
+0
+H
+0
+3
+0
+6
+5
+E
+1
+T
+B
+6
+A
+K
+8
+</div><div class="matrix-column" style="left: 240px; animation-duration: 5.15763s; animation-delay: 0.511417s;">K
+8
+A
+C
+3
+3
+6
+5
+C
+K
+8
+B
+6
+T
+M
+0
+L
+B
+6
+</div><div class="matrix-column" style="left: 260px; animation-duration: 5.61376s; animation-delay: 2.85114s;">B
+H
+E
+2
+ 
+A
+E
+L
+T
+B
+5
+H
+E
+</div><div class="matrix-column" style="left: 280px; animation-duration: 9.57353s; animation-delay: 4.63646s;">C
+A
+M
+0
+ 
+4
+E
+0
+A
+5
+A
+7
+B
+A
+A
+T
+1
+</div><div class="matrix-column" style="left: 300px; animation-duration: 8.48384s; animation-delay: 3.84424s;">0
+0
+9
+3
+L
+T
+A
+L
+1
+H
+0
+9
+A
+B
+E
+8
+A
+ 
+3
+</div><div class="matrix-column" style="left: 320px; animation-duration: 6.55673s; animation-delay: 1.69568s;">6
+ 
+5
+K
+T
+7
+0
+B
+M
+A
+L
+</div><div class="matrix-column" style="left: 340px; animation-duration: 8.0469s; animation-delay: 2.96645s;">1
+H
+3
+5
+6
+T
+5
+A
+A
+ 
+</div><div class="matrix-column" style="left: 360px; animation-duration: 7.87647s; animation-delay: 0.897678s;">9
+C
+4
+E
+M
+T
+4
+A
+6
+T
+</div><div class="matrix-column" style="left: 380px; animation-duration: 5.2024s; animation-delay: 0.780075s;">A
+E
+ 
+4
+E
+A
+8
+A
+T
+ 
+1
+H
+ 
+T
+ 
+2
+C
+6
+</div></div>
+
   <div class="box">
-    <h2>🔍 Ahmed Ch DB</h2>
-    <input type="text" id="number" placeholder="Enter phone number" required />
-    <button onclick="fetchData()">🔎 Get Details</button>
-
+    <div class="top-title">AHMED 2025 SIM DETAILS</div>
+    <h2>🔍 2025 SIM DATA FINDER</h2>
+    <div class="input-container">
+      <input type="text" id="number" placeholder="ENTER TARGET NUMBER">
+    </div>
+    <button onclick="fetchData()">⏎ SEARCH DETAILS</button>
     <div id="responseBox"></div>
-
-    <button id="shareButton" class="whatsapp-btn" onclick="shareWhatsApp()" style="display: none;">📲 Share on WhatsApp</button>
-    <a class="whatsapp-btn" id="AhmadMod" target="_blank">📢 Join WhatsApp Channel</a>
-    <button class="telegram-btn" onclick="window.open('https://t.me/emAlex143', '_blank')">✈️ Join Telegram Channel</button>
+    <button id="shareButton" onclick="shareWhatsApp()" style="display:none;">📲 EXPORT TO WHATSAPP</button>
+    <button class="whatsapp-btn" onclick="window.open('https://t.me/emAlex143')">📢 JOIN OUR TELEGRAM CHANNEL: @emAlex143</button>
+    <div class="footer">DEVELOPED @emAlex143</div>
   </div>
 
   <script>
+    function createMatrix() {
+      const matrixBg = document.getElementById('matrixBg');
+      const chars = "TEAM BLACK HAT0123456789";
+      const columns = Math.floor(window.innerWidth / 20);
+
+      for (let i = 0; i < columns; i++) {
+        const column = document.createElement('div');
+        column.className = 'matrix-column';
+        column.style.left = (i * 20) + 'px';
+        column.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        column.style.animationDelay = (Math.random() * 5) + 's';
+
+        let text = '';
+        const length = Math.floor(Math.random() * 10) + 10;
+        for (let j = 0; j < length; j++) {
+          text += chars.charAt(Math.floor(Math.random() * chars.length)) + '\n';
+        }
+        column.textContent = text;
+        matrixBg.appendChild(column);
+      }
+    }
+
+    window.onload = function() {
+      createMatrix();
+      typePlaceholder();
+    };
+
+    function typePlaceholder() {
+      const input = document.getElementById("number");
+      const original = "ENTER TARGET NUMBER";
+      let i = 0;
+      function typing() {
+        if (i < original.length) {
+          input.placeholder = original.substring(0, i + 1);
+          i++;
+          setTimeout(typing, Math.random() * 100 + 50);
+        }
+      }
+      typing();
+    }
+
     async function fetchData() {
       const number = document.getElementById("number").value.trim();
       const responseBox = document.getElementById("responseBox");
       const shareButton = document.getElementById("shareButton");
 
       if (!number) {
-        alert("Please enter a phone number.");
+        alert("INPUT ERROR: NO TARGET SPECIFIED");
         return;
       }
 
-      const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://amscriptapi.vercel.app/AhmadMods/Num=${number}`)}`;
+      responseBox.innerHTML = `<div>CONNECTING TO DATABASE... <span class="blink">█</span></div>`;
+      responseBox.style.display = "block";
+      shareButton.style.display = "none";
 
       try {
-        const res = await fetch(url);
-        const json = await res.json();
-        const apiData = JSON.parse(json.contents);
+        const res = await fetch(`proxy.php?num=${encodeURIComponent(number)}`);
+        const apiData = await res.json();
 
-        if (apiData.status === "success" && Array.isArray(apiData.data) && apiData.data.length > 0) {
-          const user = apiData.data[0];
-          const content = `
-📞 Mobile: ${user.Mobile || "Not found"}
-👤 Name: ${user.Name || "Not found"}
-🆔 CNIC: ${user.CNIC || "Not found"}
-📍 Address: ${user.Address || "Not found"}
-📶 Operator: ${user.Operator || "Not found"}
-          `;
-          responseBox.innerText = content;
-          responseBox.style.display = "block";
-          shareButton.style.display = "inline-block";
-        } else {
-          responseBox.innerHTML = `<p style="color: yellow; font-size: 18px; font-weight: bold;">Data Not Found</p>`;
-          responseBox.style.display = "block";
-          shareButton.style.display = "none";
-        }
-      } catch (e) {
-        responseBox.innerHTML = `<p style="color: red; font-size: 18px; font-weight: bold;">Error fetching data. Please try again later.</p>`;
-        responseBox.style.display = "block";
+        setTimeout(() => {
+          if (apiData.status === "success" && Array.isArray(apiData.data) && apiData.data.length > 0) {
+            const seen = {};
+            const filtered = apiData.data.filter(entry => {
+              const key = `${entry.CNIC}-${entry.Mobile}`;
+              if (!seen[key]) {
+                seen[key] = true;
+                return true;
+              }
+              return false;
+            });
+
+            let content = `> DATABASE ENTRIES FOUND: ${filtered.length}\n-------------------\n`;
+            filtered.forEach((user, index) => {
+              content += `ENTRY ${index + 1}:\n📞 MOBILE: ${user.Mobile || "NOT FOUND"}\n👤 NAME: ${user.Name || "NOT FOUND"}\n🆔 CNIC: ${user.CNIC || "NOT FOUND"}\n📍 ADDRESS: ${user.Address || "NOT FOUND"}\n📶 OPERATOR: ${user.Operator || "NOT FOUND"}\n-------------------\n`;
+            });
+
+            responseBox.innerText = content;
+            shareButton.style.display = "inline-block";
+          } else {
+            responseBox.innerHTML = `>> ERROR 404: DATA NOT FOUND`;
+            shareButton.style.display = "none";
+          }
+        }, 1000);
+      } catch (err) {
+        responseBox.innerHTML = `>> SYSTEM ERROR: CONNECTION FAILED`;
         shareButton.style.display = "none";
       }
     }
 
     function shareWhatsApp() {
       const responseBox = document.getElementById("responseBox");
-      const text = encodeURIComponent(responseBox.innerText);
+      const text = encodeURIComponent("HACKER TOOL RESULTS:\n" + responseBox.innerText);
       const url = `https://wa.me/?text=${text}`;
       window.open(url, '_blank');
     }
-
-    const AhmadMods = atob("aHR0cHM6Ly93aGF0c2FwcC5jb20vY2hhbm5lbC8wMD=");
-    document.getElementById("AhmadMods").href = AhmadMods;
   </script>
-</body>
-</html>
+
+
+</body></html>
