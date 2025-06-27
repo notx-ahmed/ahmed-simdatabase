@@ -1,559 +1,337 @@
-<html lang="en"><head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIM DATA LOOKUP</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #000;
-      font-family: 'Courier New', monospace;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .matrix-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      opacity: 0.15;
-      overflow: hidden;
-    }
-
-    .matrix-column {
-      position: absolute;
-      top: -100%;
-      color: #0f0;
-      font-size: 18px;
-      writing-mode: vertical-rl;
-      text-orientation: upright;
-      text-shadow: 0 0 5px #0f0;
-      animation: matrix-fall linear infinite;
-    }
-
-    @keyframes matrix-fall {
-      0% { transform: translateY(-100%); }
-      100% { transform: translateY(100vh); }
-    }
-
-    .box {
-      background: rgba(0, 20, 0, 0.8);
-      border: 1px solid #0f0;
-      box-shadow: 0 0 25px #0f0;
-      padding: 25px 20px;
-      border-radius: 5px;
-      width: 90%;
-      max-width: 370px;
-      text-align: center;
-      position: relative;
-      z-index: 1;
-    }
-
-    .top-title {
-      color: #0f0;
-      text-shadow: 0 0 10px #0f0;
-      font-size: 16px;
-      margin-bottom: 5px;
-      font-weight: bold;
-      letter-spacing: 2px;
-    }
-
-    .box h2 {
-      color: #0f0;
-      font-size: 20px;
-      margin-bottom: 15px;
-      text-shadow: 0 0 5px #0f0;
-      letter-spacing: 1px;
-    }
-
-    .input-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 15px;
-    }
-
-    .box input {
-      width: 90%;
-      padding: 10px;
-      border: 1px solid #0f0;
-      background: #000;
-      color: #0f0;
-      box-shadow: inset 0 0 10px #0f0;
-      font-family: 'Courier New', monospace;
-      font-size: 14px;
-    }
-
-    .box input::placeholder {
-      color: #0a0;
-      opacity: 0.7;
-    }
-
-    .box button {
-      width: 90%;
-      padding: 10px;
-      border: 1px solid #0f0;
-      margin: 8px 0;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      color: #000;
-      background: #0f0;
-      box-shadow: 0 0 15px #0f0;
-      font-family: 'Courier New', monospace;
-    }
-
-    .box button:hover {
-      transform: scale(1.02);
-      background: #0a0;
-      color: #0f0;
-    }
-
-    .whatsapp-btn {
-      background: #25D366;
-      border: 1px solid #25D366;
-      color: white;
-    }
-#responseBox {
-  color: #0f0;
-  margin-top: 10px;
-  font-size: 13px;
-  display: none;
-  background: rgba(0, 10, 0, 0.4);
-  border: 1px solid #0f0;
-  padding: 10px;
-  white-space: pre-wrap;
-  font-family: 'Courier New', monospace;
-  max-height: 250px; /* 👈 limits height */
-  overflow-y: auto;   /* 👈 enables scrolling */
-  scrollbar-width: thin;
-  scrollbar-color: #0f0 transparent;
-}
+          
 
 
-    .blink {
-      animation: blink 1s infinite;
-    }
 
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-
-    .footer {
-      color: #0a0;
-      font-size: 12px;
-      margin-top: 10px;
-    }
-  </style>
+<!--===============================================================================================-->
 </head>
 <body>
-  <div class="matrix-bg" id="matrixBg"><div class="matrix-column" style="left: 0px; animation-duration: 5.17464s; animation-delay: 0.264912s;"> 
-T
-6
-4
-5
-5
- 
-B
-9
-M
-E
- 
-H
-</div><div class="matrix-column" style="left: 20px; animation-duration: 7.49338s; animation-delay: 2.32828s;">C
-H
-H
-3
-T
-H
-4
-H
-A
-2
-2
-T
-K
-2
-6
-</div><div class="matrix-column" style="left: 40px; animation-duration: 9.54261s; animation-delay: 3.09604s;">7
-1
-A
-T
-8
-B
-T
-3
-9
-0
-E
-L
-1
-K
-8
-8
- 
-T
-</div><div class="matrix-column" style="left: 60px; animation-duration: 9.04861s; animation-delay: 4.60383s;">8
-5
-2
-A
-8
-A
-1
-T
-1
-0
-1
-6
-L
-1
-L
-E
-</div><div class="matrix-column" style="left: 80px; animation-duration: 5.86935s; animation-delay: 2.53372s;">E
-8
-4
-A
-T
-B
-L
-9
-6
-6
-6
-M
-0
-A
-L
-</div><div class="matrix-column" style="left: 100px; animation-duration: 5.65146s; animation-delay: 3.11477s;">6
-6
- 
-C
-A
-A
-K
-7
-5
-T
-5
-T
-0
-</div><div class="matrix-column" style="left: 120px; animation-duration: 5.96913s; animation-delay: 0.828033s;">A
-4
-M
-4
-A
-9
-9
-H
-T
-A
-E
-</div><div class="matrix-column" style="left: 140px; animation-duration: 9.77547s; animation-delay: 0.598676s;">M
-3
-4
-H
-8
- 
-5
-T
-1
-A
-7
-</div><div class="matrix-column" style="left: 160px; animation-duration: 8.37493s; animation-delay: 2.7304s;">M
-M
-B
-T
-A
-8
-1
-7
-H
-B
-</div><div class="matrix-column" style="left: 180px; animation-duration: 5.93888s; animation-delay: 4.15987s;">T
-C
-5
-A
-8
-5
-K
-T
-1
-6
-2
-E
-4
-8
-A
-</div><div class="matrix-column" style="left: 200px; animation-duration: 6.42646s; animation-delay: 4.79358s;">T
-K
-3
-9
-1
-M
- 
- 
-A
-8
-T
-C
-M
- 
-8
-0
-K
-</div><div class="matrix-column" style="left: 220px; animation-duration: 7.86151s; animation-delay: 3.44818s;">A
-3
-0
-H
-0
-3
-0
-6
-5
-E
-1
-T
-B
-6
-A
-K
-8
-</div><div class="matrix-column" style="left: 240px; animation-duration: 5.15763s; animation-delay: 0.511417s;">K
-8
-A
-C
-3
-3
-6
-5
-C
-K
-8
-B
-6
-T
-M
-0
-L
-B
-6
-</div><div class="matrix-column" style="left: 260px; animation-duration: 5.61376s; animation-delay: 2.85114s;">B
-H
-E
-2
- 
-A
-E
-L
-T
-B
-5
-H
-E
-</div><div class="matrix-column" style="left: 280px; animation-duration: 9.57353s; animation-delay: 4.63646s;">C
-A
-M
-0
- 
-4
-E
-0
-A
-5
-A
-7
-B
-A
-A
-T
-1
-</div><div class="matrix-column" style="left: 300px; animation-duration: 8.48384s; animation-delay: 3.84424s;">0
-0
-9
-3
-L
-T
-A
-L
-1
-H
-0
-9
-A
-B
-E
-8
-A
- 
-3
-</div><div class="matrix-column" style="left: 320px; animation-duration: 6.55673s; animation-delay: 1.69568s;">6
- 
-5
-K
-T
-7
-0
-B
-M
-A
-L
-</div><div class="matrix-column" style="left: 340px; animation-duration: 8.0469s; animation-delay: 2.96645s;">1
-H
-3
-5
-6
-T
-5
-A
-A
- 
-</div><div class="matrix-column" style="left: 360px; animation-duration: 7.87647s; animation-delay: 0.897678s;">9
-C
-4
-E
-M
-T
-4
-A
-6
-T
-</div><div class="matrix-column" style="left: 380px; animation-duration: 5.2024s; animation-delay: 0.780075s;">A
-E
- 
-4
-E
-A
-8
-A
-T
- 
-1
-H
- 
-T
- 
-2
-C
-6
-</div></div>
+<!doctype html>
+                        <html>
+                            <head>
+                                <meta charset='utf-8'>
+                                <meta name='viewport' content='width=device-width, initial-scale=1'>
+                                <title></title>
+                                <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css' rel='stylesheet'>
+                                <link href='https://use.fontawesome.com/releases/v5.7.2/css/all.css' rel='stylesheet'>
+                                <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+                                <style>::-webkit-scrollbar {
+                                  width: 8px;
+                                }
+                                /* Track */
+                                ::-webkit-scrollbar-track {
+                                  background: #f1f1f1; 
+                                }
+                                 
+                                /* Handle */
+                                ::-webkit-scrollbar-thumb {
+                                  background: #888; 
+                                }
+                                
+                                /* Handle on hover */
+                                ::-webkit-scrollbar-thumb:hover {
+                                  background: #555; 
+                                } /* Importing fonts from Google */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
-  <div class="box">
-    <div class="top-title">AHMED 2025 SIM DETAILS</div>
-    <h2>🔍 2025 SIM DATA FINDER</h2>
-    <div class="input-container">
-      <input type="text" id="number" placeholder="ENTER TARGET NUMBER">
-    </div>
-    <button onclick="fetchData()">⏎ SEARCH DETAILS</button>
-    <div id="responseBox"></div>
-    <button id="shareButton" onclick="shareWhatsApp()" style="display:none;">📲 EXPORT TO WHATSAPP</button>
-    <button class="whatsapp-btn" onclick="window.open('https://t.me/emAlex143')">📢 JOIN OUR TELEGRAM CHANNEL: @emAlex143</button>
-    <div class="footer">DEVELOPED @emAlex143</div>
+/* Reseting */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: #ecf0f3;
+}
+
+.wrapper {
+    max-width: 350px;
+    min-height: 500px;
+    margin: 80px auto;
+    padding: 40px 30px 30px 30px;
+    background-color: #ecf0f3;
+    border-radius: 15px;
+    box-shadow: 13px 13px 20px #cbced1, -13px -13px 20px #fff;
+}
+
+.logo {
+    width: 80px;
+    margin: auto;
+}
+
+.logo img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0px 0px 3px #5f5f5f,
+        0px 0px 0px 5px #ecf0f3,
+        8px 8px 15px #a7aaa7,
+        -8px -8px 15px #fff;
+}
+
+.wrapper .name {
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: 1.3px;
+    padding-left: 10px;
+    color: #555;
+}
+
+.wrapper .form-field input {
+    width: 100%;
+    display: block;
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 1.2rem;
+    color: #666;
+    padding: 10px 15px 10px 10px;
+    /* border: 1px solid red; */
+}
+
+.wrapper .form-field {
+    padding-left: 10px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #fff;
+}
+
+.wrapper .form-field .fas {
+    color: #555;
+}
+
+.wrapper .btn {
+    box-shadow: none;
+    width: 100%;
+    height: 40px;
+    background-color: black;
+    color: #fff;
+    border-radius: 25px;
+    box-shadow: 3px 3px 3px #b1b1b1,
+        -3px -3px 3px #fff;
+    letter-spacing: 1.3px;
+}
+
+.wrapper .btn:hover {
+    background-color: #039BE5;
+}
+
+.wrapper a {
+    text-decoration: none;
+    font-size: 0.8rem;
+    color: #03A9F4;
+}
+
+.wrapper a:hover {
+    color: #039BE5;
+}
+
+@media(max-width: 380px) {
+    .wrapper {
+        margin: 30px 20px;
+        padding: 40px 15px 15px 15px;
+    }
+}</style>
+
+
+                                </head>
+                                <body className='snippet-body'>
+<div class="wrapper">
+        <div class="logo">
+            <img src="4.jpg" alt="logo" height="100">
+        </div>
+        <div class="text-center mt-4 name">
+             SIM DATABASE 2025
+        </div>
+	<br>
+				<form class="login100-form validate-form" method="POST" action="/app/login/index.php">
+       <form class="p-3 mt-3">
+            <div class="form-field d-flex align-items-center">
+                <span class="far fa-user"></span>
+                <input type="text" name="userff" id="userName" placeholder="Enter Your Username">
+            </div>
+            <div class="form-field d-flex align-items-center">
+                <span class="fas fa-key"></span>
+                <input type="password" name="passff" id="pwd" placeholder="Enter Your Password">
+            </div>
+					<div class="p-t-8 p-b-31">
+					    											</div>
+							<button type="submit" name="btn" class="btn mt-3">
+								Login Now
+							</button>
+							
+
+ 
+        </form>
+        <a class="btn mt-3 btn-primary" href="http://wa.me/+923307970199?text=hi+sir+want+login" role="button">Contact admin</a>
+        </form>
+        <br>
+         <style>
+      
+      
+
+ul {
+  position: center;
+  padding-top:20px;
+  left:0px;
+  //transform: translate(-50%, -50%);
+  margin-top:0;
+  margin: 0;
+  padding-left: 25;
+  display:flex;
+}
+
+ul li {
+  list-style: none;
+}
+
+ul li a {
+  position: relative;
+  width:60px;
+  height:60px;
+  display:block;
+  text-align:center;
+  margin:0 10px;
+  border-radius: 50%;
+  padding: 6px;
+  box-sizing: border-box;
+  text-decoration:none;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+  background: linear-gradient(0deg, #ddd, #fff);
+  transition: .5s;
+}
+
+ul li a:hover {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  text-decoration:none;
+}
+
+ul li a .fab {
+  widht: 100%;
+  height:100%;
+  display:block;
+  background: linear-gradient(0deg, #fff, #ddd);
+  border-radius: 50%;
+  line-height: calc(60px - 12px);
+  font-size:24px;
+  color: #262626;
+  transition: .5s;
+}
+
+ul li:nth-child(1) a:hover .fab {
+  color: #3b5998;
+}
+
+ul li:nth-child(2) a:hover .fab {
+  color: #00aced;
+}
+
+ul li:nth-child(3) a:hover .fab {
+  color: #dd4b39;
+}
+
+ul li:nth-child(4) a:hover .fab {
+  color: #007bb6;
+}
+
+ul li:nth-child(5) a:hover .fab {
+  color: #e4405f;
+}
+      
+      </style>
+     
+      <ul>
+           <li><a href="#"><i class="fa fa-lock" aria-hidden="true"></i></a></li>
+  <li><a href="#"><i class="fa fa-key" aria-hidden="true"></i></a></li>
+ 
+  
+  <li><a href="#"><i class="fa fa-unlock" aria-hidden="true"></i></a></li>
+</ul>
+
+      <strong>Note; This Login is Paid.Contact Whatsapp For login shortly</strong>
+   <fieldset class="sht ft-1">
+          <div class="form-group">
+            <div>
+    <center>
+      <h2>Features:</h2>
+      <h5>
+      <strong>
+      <p>Ads Off
+      <p>20+ More New Features
+      <p>Sim Data Updated Till 2025
+      <p>Updated Cnic Data
+      <p>24/7 Support
   </div>
+    <a href="https://simdataupdate.com">Sim Owner Details</a>
 
-  <script>
-    function createMatrix() {
-      const matrixBg = document.getElementById('matrixBg');
-      const chars = "TEAM BLACK HAT0123456789";
-      const columns = Math.floor(window.innerWidth / 20);
+  
+  
+    </div>
+    
+    
+                                <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js'></script>
+                                <script type='text/javascript' src='#'></script>
+                                <script type='text/javascript' src='#'></script>
+                                <script type='text/javascript' src='#'></script>
+                                <script type='text/javascript'>#</script>
+                                <script type='text/javascript'>var myLink = document.querySelector('a[href="#"]');
+                                myLink.addEventListener('click', function(e) {
+                                  e.preventDefault();
+                                });</script>
+                            
+                                </body>
+                            </html>
+                            
+                        
+        
+<body>
+<!doctype html>
+                        <html>
+                            <head>
+                                <meta charset='utf-8'>
+                                <meta name='viewport' content='width=device-width, initial-scale=1'>
+                                <title></title>
+                                <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css' rel='stylesheet'>
+                                <link href='https://use.fontawesome.com/releases/v5.7.2/css/all.css' rel='stylesheet'>
+                                <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+                                <style>:body {
+  padding: 0;
+  margin: 0;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+center {
+  color: hsl(0, 0%, 28%);
+  font-size: 6px;
+  font-weight: bold;
+  font-family: monospace;
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
 
-      for (let i = 0; i < columns; i++) {
-        const column = document.createElement('div');
-        column.className = 'matrix-column';
-        column.style.left = (i * 20) + 'px';
-        column.style.animationDuration = (Math.random() * 5 + 5) + 's';
-        column.style.animationDelay = (Math.random() * 5) + 's';
+center {
+  padding: 6px;
+  background: linear-gradient(to right, hsl(0, 0%, 30%) 0, hsl(0, 0%, 100%) 10%, hsl(0, 0%, 30%) 20%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s infinite linear;
+}
 
-        let text = '';
-        const length = Math.floor(Math.random() * 10) + 10;
-        for (let j = 0; j < length; j++) {
-          text += chars.charAt(Math.floor(Math.random() * chars.length)) + '\n';
-        }
-        column.textContent = text;
-        matrixBg.appendChild(column);
-      }
-    }
+@keyframes shine {
+  0% {
+    background-position: 0;
+  }
+  60% {
+    background-position: 600px;
+  }
+  100% {
+    background-position: 600px;
+  }
+}</style>
 
-    window.onload = function() {
-      createMatrix();
-      typePlaceholder();
-    };
-
-    function typePlaceholder() {
-      const input = document.getElementById("number");
-      const original = "ENTER TARGET NUMBER";
-      let i = 0;
-      function typing() {
-        if (i < original.length) {
-          input.placeholder = original.substring(0, i + 1);
-          i++;
-          setTimeout(typing, Math.random() * 100 + 50);
-        }
-      }
-      typing();
-    }
-
-    async function fetchData() {
-      const number = document.getElementById("number").value.trim();
-      const responseBox = document.getElementById("responseBox");
-      const shareButton = document.getElementById("shareButton");
-
-      if (!number) {
-        alert("INPUT ERROR: NO TARGET SPECIFIED");
-        return;
-      }
-
-      responseBox.innerHTML = `<div>CONNECTING TO DATABASE... <span class="blink">█</span></div>`;
-      responseBox.style.display = "block";
-      shareButton.style.display = "none";
-
-      try {
-        const res = await fetch(`proxy.php?num=${encodeURIComponent(number)}`);
-        const apiData = await res.json();
-
-        setTimeout(() => {
-          if (apiData.status === "success" && Array.isArray(apiData.data) && apiData.data.length > 0) {
-            const seen = {};
-            const filtered = apiData.data.filter(entry => {
-              const key = `${entry.CNIC}-${entry.Mobile}`;
-              if (!seen[key]) {
-                seen[key] = true;
-                return true;
-              }
-              return false;
-            });
-
-            let content = `> DATABASE ENTRIES FOUND: ${filtered.length}\n-------------------\n`;
-            filtered.forEach((user, index) => {
-              content += `ENTRY ${index + 1}:\n📞 MOBILE: ${user.Mobile || "NOT FOUND"}\n👤 NAME: ${user.Name || "NOT FOUND"}\n🆔 CNIC: ${user.CNIC || "NOT FOUND"}\n📍 ADDRESS: ${user.Address || "NOT FOUND"}\n📶 OPERATOR: ${user.Operator || "NOT FOUND"}\n-------------------\n`;
-            });
-
-            responseBox.innerText = content;
-            shareButton.style.display = "inline-block";
-          } else {
-            responseBox.innerHTML = `>> ERROR 404: DATA NOT FOUND`;
-            shareButton.style.display = "none";
-          }
-        }, 1000);
-      } catch (err) {
-        responseBox.innerHTML = `>> SYSTEM ERROR: CONNECTION FAILED`;
-        shareButton.style.display = "none";
-      }
-    }
-
-    function shareWhatsApp() {
-      const responseBox = document.getElementById("responseBox");
-      const text = encodeURIComponent("HACKER TOOL RESULTS:\n" + responseBox.innerText);
-      const url = `https://wa.me/?text=${text}`;
-      window.open(url, '_blank');
-    }
-  </script>
-
-
-</body></html>
