@@ -1,1233 +1,184 @@
+<?php  
+session_start(); 
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {  
+    $video_url = htmlspecialchars($_POST['video_url']);  
+      
+    if (!empty($video_url)) {  
+        if (isset($_SESSION['last_order_time'])) {
+            $time_since_last_order = time() - $_SESSION['last_order_time'];
+            if ($time_since_last_order < 180) {
+                $message = "âŒ Please wait 3 minute!";
+            } else {
+                $allow_order = true;
+            }
+        } else {
+            $allow_order = true;
+        }
+
+        if (isset($allow_order)) {
+            $api_url = "https://pakprovider.site/api/v1";  
+            $api_key = "ENTER YOU API";  
+      
+            $post_data = [  
+                'key' => $api_key,  
+                'action' => 'add',  
+                'service' => ENTER SERVICE ID,  
+                'link' => $video_url,  
+                'quantity' => ENTER QUANTITY  
+            ];  
+      
+            $ch = curl_init();  
+            curl_setopt($ch, CURLOPT_URL, $api_url);  
+            curl_setopt($ch, CURLOPT_POST, true);  
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);  
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);  
+            $response = curl_exec($ch);  
+            curl_close($ch);  
+      
+            $result = json_decode($response, true);  
+      
+            if (isset($result['order'])) {  
+                $_SESSION['last_order_time'] = time();  
+                $message = "âœ… Likes Order Placed Successfully! Order ID: " . $result['order'];  
+            } else {  
+                $message = "âŒ Failed to send views. Error: " . ($result['error'] ?? "Unknown error");  
+            }  
+        }
+    } else {  
+        $message = "âŒ Please enter a valid TikTok video URL.";  
+    }  
+}  
+?>
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Love Proposal</title>
-
+    <title>Free TikTok Views</title>
     <style>
-
-        /* Colors */
-
-        :root {
-
-            --primary: #ff4b91;
-
-            --secondary: #ff85a1;
-
-            --accent: #fbb1bd;
-
-            --dark: #4a0025;
-
-            --light: #fff0f5;
-
-        }
-
-        
-
-        * {
-
-            margin: 0;
-
-            padding: 0;
-
-            box-sizing: border-box;
-
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-        }
-
-        
-
         body {
-
-            background-color: var(--light);
-
-            color: var(--dark);
-
-            min-height: 100vh;
-
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
-
-            justify-content: center;
-
-            padding: 20px;
-
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: #121212;
+            color: white;
+            height: 100%;
+            overflow: auto;
         }
-
-        
 
         .container {
-
-            max-width: 500px;
-
+            background: #1e1e1e;
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            max-width: 450px;
             width: 100%;
-
-            background-color: white;
-
-            border-radius: 20px;
-
-            box-shadow: 0 10px 30px rgba(255, 75, 145, 0.2);
-
-            padding: 30px;
-
-            margin-bottom: 20px;
-
+            margin: 5% auto;
+            animation: fadeIn 1s ease-in-out;
         }
 
-        
-
-        h1 {
-
-            color: var(--primary);
-
-            text-align: center;
-
-            margin-bottom: 20px;
-
-            font-size: 2rem;
-
+        h2 {
+            color: #00bcd4;
+            margin-bottom: 30px;
+            font-size: 28px;
+            animation: slideIn 1s ease-out;
         }
 
-        
-
-        .form-group {
-
-            margin-bottom: 20px;
-
-        }
-
-        
-
-        label {
-
-            display: block;
-
-            margin-bottom: 8px;
-
-            font-weight: bold;
-
-            color: var(--dark);
-
-        }
-
-        
-
-        input, textarea {
-
+        input, .btn {
             width: 100%;
-
-            padding: 12px;
-
-            border: 2px solid var(--accent);
-
-            border-radius: 10px;
-
-            font-size: 1rem;
-
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+            border: none;
+            background: #333;
+            color: white;
+            font-size: 16px;
+            transition: background 0.3s ease;
         }
-
-        
-
-        input:focus, textarea:focus {
-
-            outline: none;
-
-            border-color: var(--primary);
-
-        }
-
-        
-
-        textarea {
-
-            min-height: 100px;
-
-            resize: vertical;
-
-        }
-
-        
 
         .btn {
-
-            background-color: var(--primary);
-
-            color: white;
-
-            border: none;
-
-            padding: 12px 24px;
-
-            border-radius: 50px;
-
-            font-size: 1rem;
-
+            background: linear-gradient(45deg, #00bcd4, #ff00ff);
             cursor: pointer;
-
-            transition: all 0.3s ease;
-
-            display: block;
-
-            width: 100%;
-
-            text-align: center;
-
-            margin-top: 10px;
-
-            font-weight: bold;
-
         }
-
-        
 
         .btn:hover {
-
-            background-color: var(--secondary);
-
-            transform: translateY(-3px);
-
-            box-shadow: 0 7px 14px rgba(255, 75, 145, 0.3);
-
+            background: linear-gradient(45deg, #ff00ff, #00bcd4);
         }
 
-        
-
-        /* Template Section */
-
-        .template-section {
-
-            margin-top: 20px;
-
-            margin-bottom: 20px;
-
-            border-top: 1px solid var(--accent);
-
-            padding-top: 20px;
-
-        }
-
-        
-
-        .template-title {
-
-            font-weight: bold;
-
-            margin-bottom: 15px;
-
-            color: var(--primary);
-
-        }
-
-        
-
-        .template-list {
-
-            display: grid;
-
-            grid-template-columns: 1fr 1fr;
-
-            gap: 10px;
-
-            margin-bottom: 15px;
-
-        }
-
-        
-
-        .template-card {
-
-            border: 2px solid var(--accent);
-
-            border-radius: 10px;
-
-            padding: 15px;
-
-            cursor: pointer;
-
-            transition: all 0.3s ease;
-
-        }
-
-        
-
-        .template-card:hover {
-
-            border-color: var(--primary);
-
-            background-color: rgba(255, 75, 145, 0.05);
-
-        }
-
-        
-
-        .template-card.selected {
-
-            border-color: var(--primary);
-
-            background-color: rgba(255, 75, 145, 0.1);
-
-        }
-
-        
-
-        /* Link Section */
-
-        .link-section {
-
-            margin-top: 20px;
-
-            padding: 15px;
-
-            background-color: #f8f8f8;
-
-            border-radius: 10px;
-
-        }
-
-        
-
-        .link-box {
-
-            display: flex;
-
-            margin-top: 10px;
-
-        }
-
-        
-
-        .link-input {
-
-            flex: 1;
-
-            padding: 12px;
-
-            border: 2px solid var(--accent);
-
-            border-radius: 10px 0 0 10px;
-
-            font-size: 0.9rem;
-
-        }
-
-        
-
-        .copy-btn {
-
-            background-color: var(--primary);
-
-            color: white;
-
-            border: none;
-
-            padding: 0 15px;
-
-            border-radius: 0 10px 10px 0;
-
-            cursor: pointer;
-
-        }
-
-        
-
-        /* Proposal Page */
-
-        .proposal-page {
-
-            position: fixed;
-
-            top: 0;
-
-            left: 0;
-
-            width: 100%;
-
-            height: 100%;
-
-            background-color: var(--light);
-
-            z-index: 1000;
-
-            overflow: hidden;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-        }
-
-        
-
-        .proposal-container {
-
-            width: 90%;
-
-            max-width: 600px;
-
-            background-color: white;
-
-            border-radius: 20px;
-
-            box-shadow: 0 20px 50px rgba(255, 75, 145, 0.3);
-
-            padding: 40px;
-
-            text-align: center;
-
-            position: relative;
-
-            z-index: 10;
-
-        }
-
-        
-
-        .proposal-title {
-
-            font-size: 2.5rem;
-
-            color: var(--primary);
-
-            margin-bottom: 30px;
-
-            opacity: 0;
-
-            transform: translateY(30px);
-
-            animation: fadeInUp 1s forwards 0.5s;
-
-        }
-
-        
-
-        .proposal-heart {
-
-            font-size: 80px;
-
-            margin: 20px 0;
-
-            color: var(--primary);
-
-            display: inline-block;
-
-            opacity: 0;
-
-            transform: scale(0);
-
-            animation: scaleIn 1s forwards 1s, pulse 1.5s infinite 2s;
-
-        }
-
-        
-
-        .proposal-message {
-
-            font-size: 1.3rem;
-
-            line-height: 1.6;
-
-            margin-bottom: 30px;
-
-            white-space: pre-wrap;
-
-            opacity: 0;
-
-            transform: translateY(30px);
-
-            animation: fadeInUp 1s forwards 1.5s;
-
-        }
-
-        
-
-        .proposal-from {
-
-            font-size: 1.5rem;
-
-            font-style: italic;
-
-            color: var(--secondary);
-
+        .message {
+            background: #111;
+            padding: 20px;
             margin-top: 30px;
-
-            opacity: 0;
-
-            transform: translateY(30px);
-
-            animation: fadeInUp 1s forwards 2s;
-
-        }
-
-        
-
-        .proposal-buttons {
-
-            margin-top: 40px;
-
-            opacity: 0;
-
-            animation: fadeIn 1s forwards 2.5s;
-
-        }
-
-        
-
-        .yes-button, .no-button {
-
-            padding: 15px 40px;
-
-            font-size: 1.2rem;
-
-            margin: 0 10px;
-
-            border-radius: 50px;
-
-            cursor: pointer;
-
-            transition: all 0.3s ease;
-
-        }
-
-        
-
-        .yes-button {
-
-            background-color: var(--primary);
-
-            color: white;
-
-            border: none;
-
-        }
-
-        
-
-        .yes-button:hover {
-
-            background-color: var(--secondary);
-
-            transform: scale(1.1);
-
-        }
-
-        
-
-        .no-button {
-
-            background-color: white;
-
-            color: var(--dark);
-
-            border: 2px solid var(--accent);
-
-            position: relative;
-
-        }
-
-        
-
-        .success-message {
-
-            display: none;
-
+            border-radius: 10px;
+            box-shadow: 0 0 10px #00bcd4;
             text-align: center;
-
-            font-size: 2rem;
-
-            color: var(--primary);
-
-            margin-top: 40px;
-
-            animation: scaleIn 1s ease;
-
+            font-size: 18px;
+            animation: fadeInMessage 1s ease-out;
         }
 
-        
-
-        /* Floating Hearts */
-
-        .heart {
-
-            position: absolute;
-
-            width: 30px;
-
-            height: 30px;
-
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff4b91'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") no-repeat center center;
-
-            background-size: contain;
-
-            pointer-events: none;
-
-            opacity: 0;
-
+        .whatsapp-button {
+            display: inline-block;
+            background: #25D366;
+            color: white;
+            padding: 16px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+            margin-top: 30px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
         }
 
-        
-
-        /* Animations */
-
-        @keyframes fadeInUp {
-
-            from {
-
-                opacity: 0;
-
-                transform: translateY(30px);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform: translateY(0);
-
-            }
-
+        .whatsapp-button:hover {
+            transform: scale(1.05);
         }
-
-        
 
         @keyframes fadeIn {
-
-            from {
-
-                opacity: 0;
-
-            }
-
-            to {
-
-                opacity: 1;
-
-            }
-
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        
-
-        @keyframes scaleIn {
-
-            from {
-
-                opacity: 0;
-
-                transform: scale(0);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform: scale(1);
-
-            }
-
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        
-
-        @keyframes pulse {
-
-            0% {
-
-                transform: scale(1);
-
-            }
-
-            50% {
-
-                transform: scale(1.2);
-
-            }
-
-            100% {
-
-                transform: scale(1);
-
-            }
-
+        @keyframes fadeInMessage {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-
-        
-
-        @keyframes floatUp {
-
-            0% {
-
-                transform: translateY(0) rotate(0deg);
-
-                opacity: 0;
-
-            }
-
-            10% {
-
-                opacity: 1;
-
-            }
-
-            90% {
-
-                opacity: 1;
-
-            }
-
-            100% {
-
-                transform: translateY(-100vh) rotate(360deg);
-
-                opacity: 0;
-
-            }
-
-        }
-
-        
-
-        /* Status Message */
-
-        .status {
-
-            margin-top: 15px;
-
-            padding: 10px;
-
-            border-radius: 5px;
-
-            text-align: center;
-
-            margin-bottom: 15px;
-
-        }
-
-        
-
-        .status.success {
-
-            background-color: #d4edda;
-
-            color: #155724;
-
-            border: 1px solid #c3e6cb;
-
-        }
-
-        
-
-        .status.error {
-
-            background-color: #f8d7da;
-
-            color: #721c24;
-
-            border: 1px solid #f5c6cb;
-
-        }
-
-        
-
-        /* Confetti */
-
-        .confetti {
-
-            position: absolute;
-
-            width: 10px;
-
-            height: 10px;
-
-            opacity: 0;
-
-        }
-
-        
-
-        @keyframes fallDown {
-
-            0% {
-
-                transform: translateY(-10px) rotate(0deg);
-
-                opacity: 0;
-
-            }
-
-            10% {
-
-                opacity: 1;
-
-            }
-
-            100% {
-
-                transform: translateY(100vh) rotate(720deg);
-
-                opacity: 0;
-
-            }
-
-        }
-
-        
-
-        /* Responsive */
 
         @media (max-width: 600px) {
-
-            .template-list {
-
-                grid-template-columns: 1fr;
-
+            .container {
+                width: 90%;
+                margin: 10% auto;
             }
-
-            
-
-            .proposal-container {
-
-                padding: 30px 20px;
-
+            h2 {
+                font-size: 22px;
             }
-
-            
-
-            .proposal-title {
-
-                font-size: 2rem;
-
-            }
-
-            
-
-            .proposal-heart {
-
-                font-size: 60px;
-
-            }
-
-            
-
-            .proposal-message {
-
-                font-size: 1.1rem;
-
-            }
-
-            
-
-            .yes-button, .no-button {
-
-                padding: 12px 30px;
-
-                font-size: 1rem;
-
-                margin: 0 5px;
-
-            }
-
         }
-
     </style>
-
 </head>
-
 <body>
-
-        <!-- Creator Form -->
-
     <div class="container">
-
-        <h1>Create Your Love Proposal</h1>
-
-        
-
-                
-
-                
-
-        <form method="post" action="">
-
-            <input type="hidden" name="action" value="create">
-
-            
-
-            <div class="form-group">
-
-                <label for="fromName">Your Name</label>
-
-                <input type="text" id="fromName" name="fromName" placeholder="Enter your name" required>
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="toName">Their Name</label>
-
-                <input type="text" id="toName" name="toName" placeholder="Enter their name" required>
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="message">Your Message</label>
-
-                <textarea id="message" name="message" placeholder="Write your heartfelt message here..." required></textarea>
-
-            </div>
-
-            
-
-            <div class="template-section">
-
-                <div class="template-title">Or choose a template message:</div>
-
-                <div class="template-list">
-
-                    <div class="template-card" data-template="1">
-
-                        <div>Simple & Sweet</div>
-
-                    </div>
-
-                    <div class="template-card" data-template="2">
-
-                        <div>Romantic</div>
-
-                    </div>
-
-                    <div class="template-card" data-template="3">
-
-                        <div>Poetic</div>
-
-                    </div>
-
-                    <div class="template-card" data-template="4">
-
-                        <div>Forever</div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            
-
-            <button type="submit" class="btn">Create Proposal Link</button>
-
+        <h2>ðŸš€ Get Free TikTok Likes</h2>
+        <form method="POST">
+            <input type="text" name="video_url" placeholder="Enter TikTok Video URL" required>
+            <button type="submit" class="btn">ðŸ”¥ Send Likes</button>
         </form>
 
+        <?php if (!empty($message)) { echo '<div class="message">' . $message . '</div>'; } ?>
+
+        <!-- Updated WhatsApp Link -->
+        <a class="whatsapp-button" id="AhmadMods" target="_blank">Join Our WhatsApp Channel</a>
     </div>
 
-        
-
     <script>
-
-        // Template selection
-
-        const templateCards = document.querySelectorAll('.template-card');
-
-        const messageInput = document.getElementById('message');
-
-        
-
-        // Templates
-
-        const templates = {
-
-            1: "Every moment with you feels like a dream. Will you be mine?",
-
-            2: "From the moment our paths crossed, I knew you were special. Every day with you has been a beautiful adventure. I can't imagine my journey without you. Will you be my partner in this adventure called life?",
-
-            3: "You are the poem I never knew how to write, the song I couldn't compose. Your smile brightens my darkest days, and your love gives me strength. I want to cherish every moment with you. Will you be mine?",
-
-            4: "In your eyes, I found my home. In your heart, I found my peace. I promise to love you, cherish you, and stand by you through all of life's ups and downs. Will you accept my heart and be mine forever?"
-
-        };
-
-        
-
-        // Add event listeners to template cards
-
-        if (templateCards.length > 0 && messageInput) {
-
-            templateCards.forEach(card => {
-
-                card.addEventListener('click', () => {
-
-                    // Clear selection from all cards
-
-                    templateCards.forEach(c => c.classList.remove('selected'));
-
-                    
-
-                    // Select this card
-
-                    card.classList.add('selected');
-
-                    
-
-                    // Get template ID and set message
-
-                    const templateId = card.getAttribute('data-template');
-
-                    if (messageInput && templates[templateId]) {
-
-                        messageInput.value = templates[templateId];
-
-                    }
-
-                });
-
-            });
-
-        }
-
-        
-
-        // Copy link functionality
-
-        const copyBtn = document.getElementById('copyBtn');
-
-        const shareLink = document.getElementById('shareLink');
-
-        
-
-        if (copyBtn && shareLink) {
-
-            copyBtn.addEventListener('click', () => {
-
-                shareLink.select();
-
-                document.execCommand('copy');
-
-                copyBtn.textContent = 'Copied!';
-
-                setTimeout(() => {
-
-                    copyBtn.textContent = 'Copy';
-
-                }, 2000);
-
-            });
-
-        }
-
-        
-
-        // Proposal page functionality
-
-        const yesButton = document.getElementById('yesButton');
-
-        const noButton = document.getElementById('noButton');
-
-        const successMessage = document.getElementById('successMessage');
-
-        
-
-        if (yesButton && noButton && successMessage) {
-
-            yesButton.addEventListener('click', () => {
-
-                successMessage.style.display = 'block';
-
-                yesButton.style.display = 'none';
-
-                noButton.style.display = 'none';
-
-                createConfetti();
-
-            });
-
-            
-
-            noButton.addEventListener('mouseover', (e) => {
-
-                const button = e.target;
-
-                const container = document.querySelector('.proposal-container');
-
-                const containerRect = container.getBoundingClientRect();
-
-                
-
-                const buttonRect = button.getBoundingClientRect();
-
-                const buttonWidth = buttonRect.width;
-
-                const buttonHeight = buttonRect.height;
-
-                
-
-                const maxX = containerRect.width - buttonWidth - 40;
-
-                const maxY = containerRect.height - buttonHeight - 40;
-
-                
-
-                const randomX = Math.floor(Math.random() * maxX);
-
-                const randomY = Math.floor(Math.random() * maxY);
-
-                
-
-                button.style.position = 'absolute';
-
-                button.style.left = `${randomX}px`;
-
-                button.style.top = `${randomY}px`;
-
-            });
-
-        }
-
-        
-
-        // Create floating hearts
-
-        function createHearts() {
-
-            const container = document.querySelector('.proposal-page');
-
-            if (!container) return;
-
-            
-
-            for (let i = 0; i < 30; i++) {
-
-                const heart = document.createElement('div');
-
-                heart.classList.add('heart');
-
-                
-
-                // Random position
-
-                const left = Math.random() * 100;
-
-                heart.style.left = `${left}%`;
-
-                heart.style.top = '100%';
-
-                
-
-                // Random size
-
-                const size = 20 + Math.random() * 30;
-
-                heart.style.width = `${size}px`;
-
-                heart.style.height = `${size}px`;
-
-                
-
-                // Animation
-
-                const duration = 10 + Math.random() * 20;
-
-                const delay = Math.random() * 15;
-
-                
-
-                heart.style.animation = `floatUp ${duration}s linear ${delay}s infinite`;
-
-                heart.style.animationFillMode = 'forwards';
-
-                
-
-                container.appendChild(heart);
-
-            }
-
-        }
-
-        
-
-        // Create confetti
-
-        function createConfetti() {
-
-            const container = document.querySelector('.proposal-page');
-
-            if (!container) return;
-
-            
-
-            const colors = ['#ff4b91', '#ff85a1', '#fbb1bd', '#ffcad4', '#f3c4fb', '#b8c0ff'];
-
-            
-
-            for (let i = 0; i < 100; i++) {
-
-                const confetti = document.createElement('div');
-
-                confetti.classList.add('confetti');
-
-                
-
-                // Random position
-
-                confetti.style.left = `${Math.random() * 100}%`;
-
-                confetti.style.top = '0';
-
-                
-
-                // Random color
-
-                const color = colors[Math.floor(Math.random() * colors.length)];
-
-                confetti.style.backgroundColor = color;
-
-                
-
-                // Random shape
-
-                if (Math.random() > 0.5) {
-
-                    confetti.style.borderRadius = '50%';
-
-                } else {
-
-                    confetti.style.borderRadius = '0';
-
-                }
-
-                
-
-                // Random size
-
-                const size = 5 + Math.random() * 10;
-
-                confetti.style.width = `${size}px`;
-
-                confetti.style.height = `${size}px`;
-
-                
-
-                // Animation
-
-                const duration = 3 + Math.random() * 5;
-
-                const delay = Math.random() * 3;
-
-   
+        const AhmadMods = atob("aHR0cHM6Ly93aGF0c2FwcC5jb20vY2hhbm5lbC8wMDI5VmFqWnBxTDdUOGJSdlVxQVUyM0E=");
+        document.getElementById("AhmadMods").href = AhmadMods;
+    </script>
+</body>
+</html>
