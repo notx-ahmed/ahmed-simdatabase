@@ -1,184 +1,228 @@
-<?php  
-session_start(); 
+<!-- 
+  💻 Code By Ahmad Mods
+  ⚠️ Change Credit On Your Risk I Add Backdoors On This Code!!!
+  📍 Whatsapp Channel : https://chat.whatsapp.com/FCpqR86J798AixAbQS6GbO?mode=ac_t
+  🔱 Telegream Channel : https://t.me/GLORYOFFICIAL92
+  📅 Version: 1.0
+-->
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {  
-    $video_url = htmlspecialchars($_POST['video_url']);  
-      
-    if (!empty($video_url)) {  
-        if (isset($_SESSION['last_order_time'])) {
-            $time_since_last_order = time() - $_SESSION['last_order_time'];
-            if ($time_since_last_order < 180) {
-                $message = "âŒ Please wait 3 minute!";
-            } else {
-                $allow_order = true;
-            }
-        } else {
-            $allow_order = true;
-        }
-
-        if (isset($allow_order)) {
-            $api_url = "https://pakprovider.site/api/v1";  
-            $api_key = "ENTER YOU API";  
-      
-            $post_data = [  
-                'key' => $api_key,  
-                'action' => 'add',  
-                'service' => ENTER SERVICE ID,  
-                'link' => $https://vt.tiktok.com/ZSk8C7uQU/, 
-                'quantity' => 50000
-            ];  
-      
-            $ch = curl_init();  
-            curl_setopt($ch, CURLOPT_URL, $api_url);  
-            curl_setopt($ch, CURLOPT_POST, true);  
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);  
-            $response = curl_exec($ch);  
-            curl_close($ch);  
-      
-            $result = json_decode($response, true);  
-      
-            if (isset($result['order'])) {  
-                $_SESSION['last_order_time'] = time();  
-                $message = "âœ… Likes Order Placed Successfully! Order ID: " . $result['order'];  
-            } else {  
-                $message = "âŒ Failed to send views. Error: " . ($result['error'] ?? "Unknown error");  
-            }  
-        }
-    } else {  
-        $message = "âŒ Please enter a valid TikTok video URL."https://vt.tiktok.com/ZSk8C7uQU"/;  
-    }  
-}  
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free TikTok Views</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            background: #121212;
-            color: white;
-            height: 100%;
-            overflow: auto;
-        }
-
-        .container {
-            background: #1e1e1e;
-            padding: 40px 30px;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-            max-width: 450px;
-            width: 100%;
-            margin: 5% auto;
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        h2 {
-            color: #00bcd4;
-            margin-bottom: 30px;
-            font-size: 28px;
-            animation: slideIn 1s ease-out;
-        }
-
-        input, .btn {
-            width: 100%;
-            padding: 16px;
-            margin: 12px 0;
-            border-radius: 8px;
-            border: none;
-            background: #333;
-            color: white;
-            font-size: 16px;
-            transition: background 0.3s ease;
-        }
-
-        .btn {
-            background: linear-gradient(45deg, #00bcd4, #ff00ff);
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background: linear-gradient(45deg, #ff00ff, #00bcd4);
-        }
-
-        .message {
-            background: #111;
-            padding: 20px;
-            margin-top: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px #00bcd4;
-            text-align: center;
-            font-size: 18px;
-            animation: fadeInMessage 1s ease-out;
-        }
-
-        .whatsapp-button {
-            display: inline-block;
-            background: #25D366;
-            color: white;
-            padding: 16px 30px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 18px;
-            margin-top: 30px;
-            font-weight: bold;
-            transition: transform 0.3s ease;
-        }
-
-        .whatsapp-button:hover {
-            transform: scale(1.05);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInMessage {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                width: 90%;
-                margin: 10% auto;
-            }
-            h2 {
-                font-size: 22px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SIM DATA-BASE - AHMED MODS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet" />
+  <style>
+    canvas {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 0;
+    }
+    .urdu-text {
+      font-family: 'Noto Nastaliq Urdu', serif;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.8s ease forwards;
+    }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <h2>ðŸš€ Get Free TikTok Likes</h2>
-        <form method="POST">
-            <input type="text" name="video_url" placeholder="Enter TikTok Video URL" required>
-            <button type="submit" class="btn">ðŸ”¥ Send Likes</button>
-        </form>
+<body class="bg-black text-white font-sans overflow-hidden relative" lang="en">
 
-        <?php if (!empty($message)) { echo '<div class="message">' . $message . '</div>'; } ?>
+<canvas id="matrixCanvas" aria-hidden="true"></canvas>
 
-        <!-- Updated WhatsApp Link -->
-        <a class="whatsapp-button" id="AhmadMods" target="_blank">Join Our WhatsApp Channel</a>
-    </div>
+<main class="relative z-10 min-h-screen flex items-center justify-center px-4">
+  <section aria-labelledby="main-title" class="bg-gray-900 bg-opacity-80 backdrop-blur-md rounded-2xl shadow-lg p-8 w-full max-w-md animate-fade-in" role="main">
+    <header class="text-center mb-6">
+      <h1 id="main-title" class="text-4xl font-bold text-green-400">Ahmed-Mods</h1>
+      <h2 class="text-xl text-blue-300 mt-2">🔍 Sim Data-Base</h2>
+    </header>
 
-    <script>
-        const AhmadMods = atob("aHR0cHM6Ly93aGF0c2FwcC5jb20vY2hhbm5lbC8wMDI5VmFqWnBxTDdUOGJSdlVxQVUyM0E=");
-        document.getElementById("AhmadMods").href = AhmadMods;
-    </script>
+    <form method="POST" class="space-y-4" aria-describedby="form-description">
+      <p id="form-description" class="sr-only">Enter your phone number (03xxxxxxxxx) or CNIC (13 digits) and submit to search the SIM database.</p>
+      <label for="inputValue" class="sr-only">Phone Number or CNIC</label>
+      <input
+        type="text"
+        id="inputValue"
+        name="inputValue"
+        placeholder="03xxxxxxxxx or 13-digit CNIC"
+        pattern="(03\d{9}|\d{13})"
+        title="Enter a phone number starting with 03 followed by 9 digits, or a 13-digit CNIC number"
+        autocomplete="off"
+        inputmode="numeric"
+        required
+        class="w-full p-3 rounded-lg bg-black text-white border border-gray-700 focus:ring-2 focus:ring-green-400 focus:outline-none"
+      />
+      <button
+        type="submit"
+        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold p-3 rounded-lg transition duration-200"
+      >
+        🔎 Search
+      </button>
+    </form>
+
+    <?php
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['inputValue'])) {
+      
+        $input = trim($_POST['inputValue']);
+
+        // Validate input: phone OR CNIC
+        if (preg_match('/^(03\d{9}|\d{13})$/', $input)) {
+
+            // For phone number, remove leading 0 for API
+            if (preg_match('/^03\d{9}$/', $input)) {
+                $apiParam = ltrim($input, '0');
+            } else {
+                // CNIC sent as is
+                $apiParam = $input;
+            }
+
+            $apiParam = htmlspecialchars($apiParam, ENT_QUOTES, 'UTF-8');
+            $url = 'https://ahmadmodstools.online/Apis/Simdata.php?num=' . urlencode($apiParam);
+
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            echo '<section class="mt-6" aria-live="polite" aria-atomic="true">';
+
+            if ($httpCode === 200 && $response !== false) {
+                $data = json_decode($response, true);
+
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    echo '<div class="bg-red-900 text-red-300 p-4 rounded-lg">❌ Invalid JSON: ' . htmlspecialchars(json_last_error_msg()) . '</div>';
+                } elseif (!empty($data)) {
+                    // Handle multiple entries
+                    if (isset($data[0]) && is_array($data[0])) {
+                        echo '<h3 class="text-cyan-400 text-lg font-semibold mb-2">🔎 Multiple SIM Data Found</h3>';
+                        foreach ($data as $entry) {
+                            $name = htmlspecialchars($entry['Name'] ?? 'Not found');
+                            $cnic = htmlspecialchars($entry['CNIC'] ?? 'Not found');
+                            $numbers = htmlspecialchars($entry['Numbers'] ?? 'Not found');
+                            $address = htmlspecialchars($entry['Address'] ?? 'Not found');
+
+                            if ($numbers !== 'Not found' && $numbers[0] !== '0') {
+                                $numbers = '0' . $numbers;
+                            }
+
+                            echo "<div class='bg-gray-800 p-4 rounded-lg shadow-lg space-y-2 text-sm mb-4'>";
+                            echo "<p><strong>👤 Name:</strong> $name</p>";
+                            echo "<p><strong>🆔 CNIC:</strong> $cnic</p>";
+                            echo "<p><strong>📞 Number:</strong> $numbers</p>";
+                            echo "<p><strong>📍 Address:</strong> $address</p>";
+                            echo "</div>";
+                        }
+                    } else {
+                        // Single entry
+                        $name = htmlspecialchars($data['Name'] ?? 'Not found');
+                        $cnic = htmlspecialchars($data['CNIC'] ?? 'Not found');
+                        $numbers = htmlspecialchars($data['Numbers'] ?? 'Not found');
+                        $address = htmlspecialchars($data['Address'] ?? 'Not found');
+
+                        if ($numbers !== 'Not found' && $numbers[0] !== '0') {
+                            $numbers = '0' . $numbers;
+                        }
+
+                        $textData = "🔍 SIM Data Found\n👤 Name: $name\n🆔 CNIC: $cnic\n📞 Number: $numbers\n📍 Address: $address";
+                        $textDataJs = json_encode($textData, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+
+                        echo <<<HTML
+                        <div class="bg-gray-800 p-4 rounded-lg shadow-lg space-y-2 text-sm">
+                          <h3 class="text-center text-cyan-400 text-lg font-semibold">🔎 SIM Data Found</h3>
+                          <p><strong>👤 Name:</strong> {$name}</p>
+                          <p><strong>🆔 CNIC:</strong> {$cnic}</p>
+                          <p><strong>📞 Number:</strong> {$numbers}</p>
+                          <p><strong>📍 Address:</strong> {$address}</p>
+                          <div class="space-y-2 pt-2">
+                            <button onclick="copyData({$textDataJs})" class="w-full bg-blue-500 hover:bg-blue-600 p-2 rounded-lg" type="button">📋 Copy All Data</button>
+                            <button onclick="shareOnWhatsApp({$textDataJs})" class="w-full bg-green-500 hover:bg-green-600 text-black p-2 rounded-lg" type="button">📤 Share on WhatsApp</button>
+                          </div>
+                        </div>
+HTML;
+                    }
+                } else {
+                    echo '<div class="text-center bg-red-900 text-red-300 p-4 rounded-lg">❌ No data found for this input.</div>';
+                }
+            } else {
+                echo '<div class="text-center bg-red-900 text-red-300 p-4 rounded-lg">❌ Error fetching data. API may be down.</div>';
+            }
+
+            echo '</section>';
+        } else {
+            echo '<div class="mt-6 bg-red-900 text-red-300 p-4 rounded-lg text-center">❌ Invalid input format. Enter 03xxxxxxxxx or 13-digit CNIC.</div>';
+        }
+    }
+    ?>
+
+    <a href="https://chat.whatsapp.com/FCpqR86J798AixAbQS6GbO?mode=ac_t" target="_blank" rel="noopener noreferrer">
+      <button class="w-full mt-4 bg-green-500 hover:bg-green-600 text-black font-bold p-3 rounded-lg" type="button">💬 Contact Developer</button>
+    </a>
+  </section>
+</main>
+
+<script>
+  // Enforce '0' start for phone input if needed
+  const inputValue = document.getElementById('inputValue');
+  inputValue.addEventListener('input', () => {
+    if (/^03/.test(inputValue.value)) {
+      if (inputValue.value.length > 0 && inputValue.value[0] !== '0') {
+        inputValue.value = '0' + inputValue.value.replace(/^0+/, '');
+      }
+    }
+  });
+
+  function copyData(text) {
+    navigator.clipboard.writeText(text).then(() => alert("✅ Copied to clipboard!"))
+      .catch(() => alert("❌ Unable to copy to clipboard!"));
+  }
+
+  function shareOnWhatsApp(text) {
+    const url = "https://wa.me/?text=" + encodeURIComponent(text);
+    window.open(url, "_blank", "noopener");
+  }
+
+  // Matrix background effect
+  const canvas = document.getElementById("matrixCanvas");
+  const ctx = canvas.getContext("2d");
+  
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const chars = "01";
+  const fontSize = 16;
+  let columns = Math.floor(canvas.width / fontSize);
+  let drops = Array(columns).fill(1);
+
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#00f2ff";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars.charAt(Math.floor(Math.random() * chars.length));
+      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+  setInterval(drawMatrix, 30);
+</script>
+
 </body>
 </html>
