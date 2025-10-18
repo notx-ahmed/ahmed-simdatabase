@@ -1,39 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Unban Tool</title>
+  <meta charset="UTF-8" />
+  <title>NOTx AHMED - Terminal Hacker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body, html {
+    body {
       margin: 0;
       padding: 0;
-      font-family: sans-serif;
+      background: black;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
     }
-    .center {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-      background-color: #f0f0f0;
+
+    .disco {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: linear-gradient(45deg, red, yellow, lime, cyan, blue, magenta);
+      background-size: 400% 400%;
+      animation: disco 10s linear infinite;
+      opacity: 0.08;
+      z-index: 0;
     }
-    .hidden {
-      display: none;
+
+    @keyframes disco {
+      0% { background-position: 0% 50% }
+      50% { background-position: 100% 50% }
+      100% { background-position: 0% 50% }
     }
-    .background {
-      background-image: url('https://i.postimg.cc/wjFKCrQC/IMG-20250721-123941-559.jpg');
-      background-size: cover;
-      background-position: center;
-      height: 100vh;
-      color: white;
+
+    .terminal {
+      position: relative;
+      z-index: 1;
       padding: 20px;
-      text-align: center;
+      max-width: 800px;
+      margin: 50px auto;
+      background: rgba(0,0,0,0.8);
+      border-radius: 10px;
+      box-shadow: 0 0 20px #0f0;
+      min-height: 300px;
     }
-    .btn {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
+
+    .rainbow-text {
+    font-size: 2em;
+      font-weight: bold;
+      background: linear-gradient(90deg, red, yellow, green, cyan, blue, violet);
+      background-size: 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbow 5s linear infinite;
+      text-align: center;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px #0f0;
+      cursor: default;
+    }
+
+    @keyframes rainbow {
+      0% { background-position: 0% }
+      100% { background-position: 100% }
+    }
+
+    .typing-line {
+      white-space: pre;
+      overflow: hidden;
+      border-right: 2px solid #0f0;
+      width: 0;
+      animation: typing 2s steps(40, end) forwards, blink 0.8s step-end infinite;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent }
+    }
+
+    button {
+      display: block;
+      margin: 20px auto 0;
+      background: #0f0;
+      color: #000;
+      padding: 12px 25px;
       border: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      cursor: pointer;
+      border-radius: 6px;
+      box-shadow: 0 0 15px #0f0;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #afff00;
+      box-shadow: 0 0 25px #afff00;
+    }
+  </style>
+</head>
+<body>
+  <div class="disco"></div>
+
+  <div class="terminal">
+    <div class="rainbow-text">NOTx AHMED - SYSTEM BOOTING...</div>
+    <div id="output"></div>
+    <button onclick="playSound()">Play Trap Sound</button>
+  </div>
+
+  <audio id="trapAudio">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_38ec577511.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    const lines = [
+      "[*] Initializing system...",
+      "[*] Connecting to remote server...",
+      "[+] Access granted.",
+      "[*] Scanning targets...",
+      "[+] Found 12 vulnerabilities.",
+      "[*] Deploying payload...",
+      "[✓] Operation complete."
+    ];
+
+    let index = 0;
+    const output = document.getElementById("output");
+
+    function typeNext() {
+      if (index < lines.length) {
+        const line = document.createElement("div");
+        line.className = "typing-line";
+        line.textContent = lines[index++];
+        output.appendChild(line);
+        setTimeout(typeNext, 2500);
+      }
+    }
+
+    function playSound() {
+      document.getElementById("trapAudio").play();
+    }
+
+    // Start typing animation on page load
+    window.onload = () => {
+      typeNext();
+    };
+  </script>
+</body>
+</html>
       border-radius: 10px;
       cursor: pointer;
       background-color: #4CAF50;
