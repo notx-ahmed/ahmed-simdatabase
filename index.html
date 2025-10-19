@@ -2,153 +2,131 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>NOTx AHMED - Terminal Hacker</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hacker Terminal</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
       background: black;
-      color: #0f0;
       font-family: 'Courier New', monospace;
+      color: #0f0;
       overflow: hidden;
     }
 
-    .disco {
+    #terminal {
+      height: 90vh;
+      padding: 20px;
+      overflow-y: scroll;
+      white-space: pre-wrap;
+    }
+
+    .rainbow-text {
+      font-size: 28px;
+      font-weight: bold;
+      text-align: center;
+      animation: rainbow 5s infinite linear, glow 1s ease-in-out infinite alternate;
+    }
+
+    @keyframes rainbow {
+      0% { color: red; }
+      25% { color: orange; }
+      50% { color: yellow; }
+      75% { color: green; }
+      100% { color: blue; }
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #0f0; }
+      to { text-shadow: 0 0 20px #0ff, 0 0 30px #f0f; }
+    }
+
+    body::before {
+      content: "";
       position: fixed;
+      top: 0; left: 0;
       width: 100%;
       height: 100%;
-      top: 0;
-      left: 0;
-      background: linear-gradient(45deg, red, yellow, lime, cyan, blue, magenta);
-      background-size: 400% 400%;
-      animation: disco 10s linear infinite;
-      opacity: 0.08;
+      background: repeating-radial-gradient(circle, #222, #000 10%);
+      animation: disco 2s infinite linear;
+      opacity: 0.05;
       z-index: 0;
     }
 
     @keyframes disco {
-      0% { background-position: 0% 50% }
-      50% { background-position: 100% 50% }
-      100% { background-position: 0% 50% }
+      from { background-position: 0 0; }
+      to { background-position: 100% 100%; }
     }
 
-    .terminal {
-      position: relative;
-      z-index: 1;
-      padding: 20px;
-      max-width: 800px;
-      margin: 50px auto;
-      background: rgba(0,0,0,0.8);
-      border-radius: 10px;
-      box-shadow: 0 0 20px #0f0;
-      min-height: 300px;
-    }
-
-    .rainbow-text {
-    font-size: 2em;
-      font-weight: bold;
-      background: linear-gradient(90deg, red, yellow, green, cyan, blue, violet);
-      background-size: 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: rainbow 5s linear infinite;
-      text-align: center;
-      margin-bottom: 30px;
-      text-shadow: 0 0 10px #0f0;
-      cursor: default;
-    }
-
-    @keyframes rainbow {
-      0% { background-position: 0% }
-      100% { background-position: 100% }
-    }
-
-    .typing-line {
-      white-space: pre;
-      overflow: hidden;
-      border-right: 2px solid #0f0;
-      width: 0;
-      animation: typing 2s steps(40, end) forwards, blink 0.8s step-end infinite;
-      font-size: 1.2em;
-      margin-bottom: 10px;
-    }
-
-    @keyframes typing {
-      from { width: 0 }
-      to { width: 100% }
-    }
-
-    @keyframes blink {
-      50% { border-color: transparent }
+    #controls {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      z-index: 2;
     }
 
     button {
-      display: block;
-      margin: 20px auto 0;
-      background: #0f0;
-      color: #000;
-      padding: 12px 25px;
-      border: none;
-      font-weight: bold;
-      font-size: 1.1em;
+      padding: 10px 15px;
+      background: #111;
+      color: #0f0;
+      border: 1px solid #0f0;
       cursor: pointer;
-      border-radius: 6px;
-      box-shadow: 0 0 15px #0f0;
-      transition: background 0.3s ease;
-    }
-
-    button:hover {
-      background: #afff00;
-      box-shadow: 0 0 25px #afff00;
+      font-family: monospace;
     }
   </style>
 </head>
 <body>
-  <div class="disco"></div>
-
-  <div class="terminal">
-    <div class="rainbow-text">NOTx AHMED - SYSTEM BOOTING...</div>
-    <div id="output"></div>
-    <button onclick="playSound()">Play Trap Sound</button>
+  <div class="rainbow-text">NOTx AHMED</div>
+  <div id="terminal"></div>
+  <div id="controls">
+    <button onclick="playSound()">▶ Play Sound</button>
+    <button onclick="saveLog()">💾 Save Log</button>
+    <audio id="sound" src="https://cdn.pixabay.com/download/audio/2023/03/14/audio_b2e6a7d7c8.mp3" preload="auto"></audio>
   </div>
 
-  <audio id="trapAudio">
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_38ec577511.mp3" type="audio/mpeg" />
-  </audio>
-
   <script>
+    const terminal = document.getElementById("terminal");
     const lines = [
-      "[*] Initializing system...",
-      "[*] Connecting to remote server...",
-      "[+] Access granted.",
-      "[*] Scanning targets...",
-      "[+] Found 12 vulnerabilities.",
-      "[*] Deploying payload...",
-      "[✓] Operation complete."
+      "[*] Initializing...",
+      "[*] Booting virtual machine...",
+      "[*] Connecting to 192.168.1.1...",
+      "[+] Connection established.",
+      "[*] Uploading payload...",
+      "[+] Upload successful!",
+      "[*] Accessing admin panel...",
+      "[+] Root access granted!",
+      "[*] Extracting credentials...",
+      "[+] User: admin | Pass: ******",
+      "[*] Logging actions...",
+      "[*] System override: ENABLED",
+      "[*] Surveillance active.",
+      "[*] Connection secured via VPN.",
+      "[*] Injecting scripts...",
+      "[+] Operation complete."
     ];
 
     let index = 0;
-    const output = document.getElementById("output");
 
-    function typeNext() {
+    function typeLine() {
       if (index < lines.length) {
-        const line = document.createElement("div");
-        line.className = "typing-line";
-        line.textContent = lines[index++];
-        output.appendChild(line);
-        setTimeout(typeNext, 2500);
+        terminal.innerHTML += lines[index] + "\n";
+        terminal.scrollTop = terminal.scrollHeight;
+        index++;
+        setTimeout(typeLine, 800);
       }
     }
 
     function playSound() {
-      document.getElementById("trapAudio").play();
+      document.getElementById("sound").play();
     }
 
-    // Start typing animation on page load
-    window.onload = () => {
-      typeNext();
-    };
+    function saveLog() {
+      const blob = new Blob([terminal.innerText], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "terminal_log.txt";
+      link.click();
+    }
+
+    typeLine();
   </script>
 </body>
 </html>
