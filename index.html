@@ -1,132 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Hacker Terminal</title>
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      font-family: 'Courier New', monospace;
-      color: #0f0;
-      overflow: hidden;
-    }
-
-    #terminal {
-      height: 90vh;
-      padding: 20px;
-      overflow-y: scroll;
-      white-space: pre-wrap;
-    }
-
-    .rainbow-text {
-      font-size: 28px;
-      font-weight: bold;
-      text-align: center;
-      animation: rainbow 5s infinite linear, glow 1s ease-in-out infinite alternate;
-    }
-
-    @keyframes rainbow {
-      0% { color: red; }
-      25% { color: orange; }
-      50% { color: yellow; }
-      75% { color: green; }
-      100% { color: blue; }
-    }
-
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #0f0; }
-      to { text-shadow: 0 0 20px #0ff, 0 0 30px #f0f; }
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background: repeating-radial-gradient(circle, #222, #000 10%);
-      animation: disco 2s infinite linear;
-      opacity: 0.05;
-      z-index: 0;
-    }
-
-    @keyframes disco {
-      from { background-position: 0 0; }
-      to { background-position: 100% 100%; }
-    }
-
-    #controls {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      z-index: 2;
-    }
-
-    button {
-      padding: 10px 15px;
-      background: #111;
-      color: #0f0;
-      border: 1px solid #0f0;
-      cursor: pointer;
-      font-family: monospace;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIM Details Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            font-size: 3em;
+            margin: 20px 0;
+            color: #333;
+            animation: glow 1.5s infinite alternate;
+        }
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000;
+            }
+            to {
+                text-shadow: 0 0 20px #ff7f7f, 0 0 30px #ff7f7f, 0 0 40px #ff0000, 0 0 50px #ff0000;
+            }
+        }
+        #result {
+            margin: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
-  <div class="rainbow-text">NOTx AHMED</div>
-  <div id="terminal"></div>
-  <div id="controls">
-    <button onclick="playSound()">▶ Play Sound</button>
-    <button onclick="saveLog()">💾 Save Log</button>
-    <audio id="sound" src="https://cdn.pixabay.com/download/audio/2023/03/14/audio_b2e6a7d7c8.mp3" preload="auto"></audio>
-  </div>
 
-  <script>
-    const terminal = document.getElementById("terminal");
-    const lines = [
-      "[*] Initializing...",
-      "[*] Booting virtual machine...",
-      "[*] Connecting to 192.168.1.1...",
-      "[+] Connection established.",
-      "[*] Uploading payload...",
-      "[+] Upload successful!",
-      "[*] Accessing admin panel...",
-      "[+] Root access granted!",
-      "[*] Extracting credentials...",
-      "[+] User: admin | Pass: ******",
-      "[*] Logging actions...",
-      "[*] System override: ENABLED",
-      "[*] Surveillance active.",
-      "[*] Connection secured via VPN.",
-      "[*] Injecting scripts...",
-      "[+] Operation complete."
-    ];
+    <h1>NOTx AHMED</h1>
+    <input type="text" id="phoneNumber" placeholder="Enter phone number" />
+    <button onclick="fetchSIMDetails()">Get SIM Details</button>
+    <div id="result"></div>
 
-    let index = 0;
+    <footer>
+        ALL RIGHTS RESERVED NOTX AHMED
+    </footer>
 
-    function typeLine() {
-      if (index < lines.length) {
-        terminal.innerHTML += lines[index] + "\n";
-        terminal.scrollTop = terminal.scrollHeight;
-        index++;
-        setTimeout(typeLine, 800);
-      }
-    }
+    <script>
+        function fetchSIMDetails() {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            if (!phoneNumber) {
+                alert("Please enter a phone number.");
+                return;
+            }
+            const apiUrl = `https://shadowscriptz.xyz/public_apis/simdetailsapi.php?number=${phoneNumber}`;
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    document.getElementById('result').innerText = "An error occurred while fetching the data.";
+                });
+        }
+    </script>
 
-    function playSound() {
-      document.getElementById("sound").play();
-    }
-
-    function saveLog() {
-      const blob = new Blob([terminal.innerText], { type: "text/plain" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "terminal_log.txt";
-      link.click();
-    }
-
-    typeLine();
-  </script>
 </body>
 </html>
