@@ -1,77 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="FXjTy7J5WUJx55vhdk6sKRd6hvipIpNniFLc7YbPg4s" />
-    <title>SIM Details Lookup</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f0f0;
-        }
-        h1 {
-            font-size: 3em;
-            margin: 20px 0;
-            color: #333;
-            animation: glow 1.5s infinite alternate;
-        }
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000;
-            }
-            to {
-                text-shadow: 0 0 20px #ff7f7f, 0 0 30px #ff7f7f, 0 0 40px #ff0000, 0 0 50px #ff0000;
-            }
-        }
-        #result {
-            margin: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            background-color: #fff;
-        }
-        footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #333;
-            color: white;
-            padding: 10px 0;
-            font-size: 0.9em;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHMED SIM DATABASE</title>
+
+<style>
+:root{
+--bg:#0b1220;
+--card:#0f172a;
+--input:#020617;
+--border:#1e293b;
+--text:#f8fafc;
+--muted:#94a3b8;
+--accent:#2563eb;
+}
+body.light{
+--bg:#f1f5f9;
+--card:#ffffff;
+--input:#f8fafc;
+--border:#cbd5e1;
+--text:#020617;
+--muted:#475569;
+--accent:#1d4ed8;
+}
+*{box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
+body{
+margin:0;min-height:100vh;
+background:var(--bg);
+display:flex;justify-content:center;
+padding:18px;color:var(--text);
+overflow:hidden;
+}
+.watermark{
+position:fixed;top:45%;left:-120%;
+font-size:56px;font-weight:900;
+color:rgba(255,255,255,.04);
+white-space:nowrap;transform:rotate(-18deg);
+animation:move 22s linear infinite;
+pointer-events:none;
+}
+body.light .watermark{color:rgba(0,0,0,.05)}
+@keyframes move{from{left:-120%}to{left:120%}}
+
+.container{
+width:100%;max-width:460px;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:18px;
+padding:26px;
+z-index:1;
+}
+.toggle-wrap{display:flex;justify-content:flex-end}
+.toggle{
+width:54px;height:26px;
+background:var(--border);
+border-radius:50px;cursor:pointer;
+position:relative;
+}
+.toggle:before{
+content:"";width:22px;height:22px;
+background:var(--accent);
+border-radius:50%;
+position:absolute;top:2px;left:3px;
+transition:.3s;
+}
+body.light .toggle:before{left:29px}
+
+.header{text-align:center;margin:16px 0 22px}
+.header h1{font-size:28px;font-weight:900;letter-spacing:1px}
+.header p{font-size:13px;font-weight:600;color:var(--muted)}
+
+.input{
+width:100%;padding:16px;
+background:var(--input);
+border:1px solid var(--border);
+border-radius:14px;
+color:var(--text);
+font-size:15px;font-weight:700;
+margin-bottom:14px;
+}
+.btn{
+width:100%;padding:16px;
+border-radius:14px;border:none;
+font-size:16px;font-weight:900;
+cursor:pointer;
+}
+.btn-search{background:var(--accent);color:white}
+.btn-telegram{
+margin-top:12px;display:block;
+text-align:center;padding:14px;
+border-radius:14px;
+border:1px solid var(--accent);
+color:var(--accent);
+font-weight:900;text-decoration:none;
+}
+.result{
+margin-top:20px;
+background:var(--input);
+border:1px solid var(--border);
+border-radius:14px;
+padding:16px;
+font-family:monospace;
+font-size:13px;line-height:1.7;
+}
+.line{margin-bottom:6px}
+.label{color:var(--accent);font-weight:900}
+.copy-btn{
+margin-top:10px;width:100%;
+padding:12px;border-radius:10px;
+border:1px solid var(--border);
+background:rgba(37,99,235,.1);
+font-weight:800;cursor:pointer;
+}
+.footer{text-align:center;margin-top:18px;
+font-size:11px;font-weight:600;color:var(--muted)}
+</style>
 </head>
+
 <body>
 
-    <h1>NOTx AHMED</h1>
-    <input type="text" id="phoneNumber" placeholder="Enter phone number" />
-    <button onclick="fetchSIMDetails()">Get SIM Details</button>
-    <div id="result"></div>
+<div class="watermark">NOTx AHMED</div>
 
-    <footer>
-        ALL RIGHTS RESERVED NOTX AHMED
-    </footer>
+<div class="container">
 
-    <script>
-        function fetchSIMDetails() {
-            const phoneNumber = document.getElementById('phoneNumber').value;
-            if (!phoneNumber) {
-                alert("Please enter a phone number.");
-                return;
-            }
-            const apiUrl = `https://shadowscriptz.xyz/public_apis/simdetailsapi.php?number=${phoneNumber}`;
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('result').innerText = JSON.stringify(data, null, 2);
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    document.getElementById('result').innerText = "An error occurred while fetching the data.";
-                });
-        }
-    </script>
+<div class="toggle-wrap">
+<div class="toggle" onclick="toggleTheme()"></div>
+</div>
+
+<div class="header">
+<h1>AHMED SIM DATABASE</h1>
+<p>PROFESSIONAL SIM & CNIC LOOKUP SYSTEM</p>
+</div>
+
+<input id="number" class="input" placeholder="Enter Phone or CNIC Number">
+
+<button class="btn btn-search" onclick="searchData()">SEARCH DATABASE</button>
+
+<a class="btn-telegram" href="https://t.me/DEVIL_INSIDE5" target="_blank">
+JOIN TELEGRAM CHANNEL
+</a>
+
+<div class="result" id="result">
+<div class="line"><span class="label">STATUS:</span> Waiting for input</div>
+</div>
+
+<button class="copy-btn" onclick="copyResult()">COPY RESULT</button>
+
+<div class="footer">
+© 2025 All rights reserved to <b>NOTx AHMED 💯</b>
+</div>
+
+</div>
+
+<script>
+function toggleTheme(){
+document.body.classList.toggle("light");
+}
+
+function renderObject(obj){
+let html="";
+for(const key in obj){
+html+=`<div class="line"><span class="label">${key.toUpperCase()}:</span> ${obj[key]}</div>`;
+}
+return html;
+}
+
+function searchData(){
+const num=document.getElementById("number").value.trim();
+const box=document.getElementById("result");
+
+if(!num){
+box.innerHTML=`<div class="line"><span class="label">ERROR:</span> Enter a number</div>`;
+return;
+}
+
+box.innerHTML=`<div class="line"><span class="label">STATUS:</span> Fetching data...</div>`;
+
+const url="https://api.allorigins.win/raw?url="+
+encodeURIComponent("https://api.cnic.pro/?num="+num);
+
+fetch(url)
+.then(r=>r.text())
+.then(text=>{
+let data;
+try{ data=JSON.parse(text); }catch{
+box.innerHTML=`<div class="line"><span class="label">RESULT:</span><br>${text}</div>`;
+return;
+}
+
+let output="";
+if(Array.isArray(data)){
+data.forEach((item,i)=>{
+output+=`<div class="line"><span class="label">RECORD ${i+1}</span></div>`;
+output+=renderObject(item);
+output+=`<hr style="border-color:var(--border)">`;
+});
+}else{
+output=renderObject(data);
+}
+
+box.innerHTML=`
+<div class="line"><span class="label">QUERY:</span> ${num}</div>
+<div class="line"><span class="label">STATUS:</span> Completed</div>
+<hr style="border-color:var(--border)">
+${output}
+`;
+})
+.catch(()=>{
+box.innerHTML=`<div class="line"><span class="label">ERROR:</span> Fetch failed</div>`;
+});
+}
+
+function copyResult(){
+navigator.clipboard.writeText(
+document.getElementById("result").innerText
+);
+alert("Result copied");
+}
+</script>
 
 </body>
 </html>
