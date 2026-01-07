@@ -2,7 +2,7 @@
 ╔══════════════════════════════╗
 ║     SIMDATABASE v1.0          ║
 ║  Coded by: NOTx AHMED        ║
-║  © 2025 - MIT Licensed       ║
+║  © 2026 - MIT Licensed       ║
 ╚══════════════════════════════╝
 ```
 
