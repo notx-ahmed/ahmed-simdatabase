@@ -7,24 +7,16 @@
 
 <style>
 :root{
---bg:#020617;
---card:#020617;
---input:#020617;
---border:#1e293b;
---text:#f8fafc;
---muted:#94a3b8;
---accent:#22d3ee;
+--bg:#020617;--card:#020617;--input:#020617;
+--border:#1e293b;--text:#f8fafc;
+--muted:#94a3b8;--accent:#22d3ee;
 }
 body.light{
---bg:#f1f5f9;
---card:#ffffff;
---input:#f8fafc;
---border:#cbd5e1;
---text:#020617;
---muted:#475569;
---accent:#2563eb;
+--bg:#f1f5f9;--card:#ffffff;--input:#f8fafc;
+--border:#cbd5e1;--text:#020617;
+--muted:#475569;--accent:#2563eb;
 }
-*{box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
+*{box-sizing:border-box;font-family:Inter,system-ui}
 body{
 margin:0;min-height:100vh;
 background:radial-gradient(circle at top,#1e3a8a,#020617);
@@ -33,16 +25,12 @@ padding:18px;color:var(--text);
 overflow:hidden;
 }
 
-/* 🌈 STROBE */
+/* GLOW */
 @keyframes glow{
 0%{box-shadow:0 0 15px red}
-20%{box-shadow:0 0 20px orange}
-40%{box-shadow:0 0 25px yellow}
-60%{box-shadow:0 0 25px lime}
-80%{box-shadow:0 0 25px cyan}
+50%{box-shadow:0 0 25px cyan}
 100%{box-shadow:0 0 25px magenta}
 }
-
 .container{
 max-width:460px;width:100%;
 background:var(--card);
@@ -65,117 +53,105 @@ pointer-events:none;
 
 .toggle-wrap{display:flex;justify-content:flex-end}
 .toggle{
-width:54px;height:26px;
-background:var(--border);
-border-radius:50px;cursor:pointer;
-position:relative;
+width:54px;height:26px;background:var(--border);
+border-radius:50px;cursor:pointer;position:relative;
 }
 .toggle:before{
 content:"";width:22px;height:22px;
-background:var(--accent);
-border-radius:50%;
-position:absolute;top:2px;left:3px;
-transition:.3s;
+background:var(--accent);border-radius:50%;
+position:absolute;top:2px;left:3px;transition:.3s;
 }
 body.light .toggle:before{left:29px}
 
 /* HEADER */
-.header{text-align:center;margin:10px 0}
-.header h1{
-font-size:28px;font-weight:900;
-animation:rainbow 3s infinite;
-}
+.header{text-align:center}
+.header h1{font-size:28px;font-weight:900;animation:rainbow 3s infinite}
 @keyframes rainbow{
-0%{color:red}20%{color:orange}40%{color:yellow}
-60%{color:lime}80%{color:cyan}100%{color:magenta}
+0%{color:red}25%{color:orange}
+50%{color:lime}75%{color:cyan}
+100%{color:magenta}
 }
-.header p{font-size:13px;font-weight:600;color:var(--muted)}
+.header p{font-size:13px;color:var(--muted)}
 
-#clock{text-align:center;font-weight:900;color:#22d3ee;margin-bottom:10px}
+#clock{text-align:center;font-weight:900;color:#22d3ee;margin:10px 0}
 
 /* INPUT */
 .input,button{
-width:100%;padding:15px;
-border-radius:14px;
-font-size:15px;
-font-weight:800;
-margin-top:12px;
+width:100%;padding:15px;border-radius:14px;
+font-size:15px;font-weight:800;margin-top:12px;
 border:1px solid var(--border);
 }
 .input{background:var(--input);color:var(--text)}
 button{
 background:linear-gradient(90deg,#2563eb,#22d3ee);
-color:white;cursor:pointer;
-border:none;
+color:white;cursor:pointer;border:none;
 }
 
 /* LOADER */
 .loader{
-display:none;
-margin:14px auto;
-width:40px;height:40px;
-border:4px solid var(--border);
+display:none;margin:14px auto;
+width:40px;height:40px;border:4px solid var(--border);
 border-top:4px solid var(--accent);
-border-radius:50%;
-animation:spin 1s linear infinite;
+border-radius:50%;animation:spin 1s linear infinite;
 }
 @keyframes spin{100%{transform:rotate(360deg)}}
 
+/* PROGRESS */
+.progress{
+height:6px;border-radius:10px;
+background:linear-gradient(90deg,#22d3ee,#2563eb);
+width:0%;transition:.4s;margin-top:8px;
+}
+
 /* RESULT */
 .result{
-margin-top:14px;
-padding:14px;
-border-radius:14px;
-background:var(--input);
-border:1px solid var(--border);
-font-family:monospace;
-font-size:13px;
-line-height:1.6;
+margin-top:14px;padding:14px;border-radius:14px;
+background:var(--input);border:1px solid var(--border);
+font-family:monospace;font-size:13px;line-height:1.6;
+white-space:pre-wrap;
 }
+
+/* EFFECTS */
+@keyframes shake{
+0%{transform:translateX(0)}
+25%{transform:translateX(-5px)}
+50%{transform:translateX(5px)}
+75%{transform:translateX(-5px)}
+100%{transform:translateX(0)}
+}
+.shake{animation:shake .3s}
+
+@keyframes pop{
+0%{transform:scale(.9);opacity:.5}
+100%{transform:scale(1);opacity:1}
+}
+.pop{animation:pop .4s}
 
 .copy-btn{margin-top:10px;background:rgba(34,211,238,.15)}
 
 /* HISTORY */
 .history-item{
-cursor:pointer;
-padding:6px 10px;
-border-radius:8px;
-background:rgba(34,211,238,.08);
-margin-top:5px;
-font-weight:700;
+cursor:pointer;padding:6px 10px;
+border-radius:8px;background:rgba(34,211,238,.08);
+margin-top:5px;font-weight:700;
 }
 .history-item:hover{background:rgba(34,211,238,.2)}
 
-.viewer{
-margin-top:12px;
-text-align:center;
-font-weight:900;
-color:#22d3ee;
-text-shadow:0 0 10px #22d3ee;
-}
+.viewer{text-align:center;margin-top:10px;font-weight:900;color:#22d3ee}
 
 /* CONFETTI */
 #confetti{
-position:fixed;
-top:0;left:0;
+position:fixed;top:0;left:0;
 width:100%;height:100%;
-pointer-events:none;
-z-index:1;
+pointer-events:none;z-index:1;
 }
 
-/* 🚀 TELEGRAM FLOAT */
+/* TELEGRAM FLOAT */
 .tg-float{
-position:fixed;
-bottom:18px;
-right:18px;
-background:#229ED9;
-color:white;
-font-weight:900;
-padding:14px 16px;
-border-radius:50px;
-text-decoration:none;
-box-shadow:0 0 20px #229ED9;
-z-index:10;
+position:fixed;bottom:18px;right:18px;
+background:#229ED9;color:white;font-weight:900;
+padding:14px 16px;border-radius:50px;
+text-decoration:none;box-shadow:0 0 20px #229ED9;
 animation:pulse 1.5s infinite;
 }
 @keyframes pulse{
@@ -184,12 +160,7 @@ animation:pulse 1.5s infinite;
 100%{transform:scale(1)}
 }
 
-.footer{
-text-align:center;
-margin-top:16px;
-font-size:11px;
-color:var(--muted);
-}
+.footer{text-align:center;margin-top:16px;font-size:11px;color:var(--muted)}
 </style>
 </head>
 
@@ -198,15 +169,10 @@ color:var(--muted);
 <div class="watermark">NOTx AHMED</div>
 <canvas id="confetti"></canvas>
 
-<a class="tg-float" href="https://t.me/devil_inside5" target="_blank">
-📲 Join Telegram
-</a>
+<a class="tg-float" href="https://t.me/devil_inside5" target="_blank">📲 Join Telegram</a>
 
 <div class="container">
-
-<div class="toggle-wrap">
-<div class="toggle" onclick="toggleTheme()"></div>
-</div>
+<div class="toggle-wrap"><div class="toggle" onclick="toggleTheme()"></div></div>
 
 <div class="header">
 <h1>AHMED SIM DATABASE</h1>
@@ -216,54 +182,52 @@ color:var(--muted);
 <div id="clock"></div>
 
 <input id="number" class="input" placeholder="Enter Phone or CNIC Number">
-
 <button onclick="searchData()">SEARCH DATABASE</button>
 
 <div class="loader" id="loader"></div>
+<div class="progress" id="progress"></div>
 
 <div class="result" id="result">STATUS: Waiting for input</div>
 
 <button class="copy-btn" onclick="copyResult()">COPY RESULT</button>
-
-<button onclick="shareTelegram()" class="copy-btn">
-📤 SHARE TO TELEGRAM
-</button>
+<button class="copy-btn" onclick="shareTelegram()">📤 SHARE TO TELEGRAM</button>
 
 <div id="history"></div>
-
 <div class="viewer" id="viewer"></div>
+<div class="viewer" id="counter"></div>
 
-<div class="footer">
-© 2025 All rights reserved to <b>NOTx AHMED 💯</b>
-</div>
+<div class="footer">© 2025 All rights reserved to <b>NOTx AHMED 💯</b></div>
 
-<audio id="clickSound">
-<source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3">
-</audio>
-
+<audio id="clickSound"><source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+<audio id="successSound"><source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
 </div>
 
 <script>
 function toggleTheme(){document.body.classList.toggle("light");}
 
 /* CLOCK */
-setInterval(()=>{clock.innerText="🕒 "+new Date().toLocaleTimeString();},1000);
+setInterval(()=>clock.innerText="🕒 "+new Date().toLocaleTimeString(),1000);
 
 /* VIEWERS */
-let v=sessionStorage.getItem("viewers");
-if(!v){v=Math.floor(Math.random()*10)+1;sessionStorage.setItem("viewers",v);}
+let v=sessionStorage.getItem("viewers")||Math.floor(Math.random()*20+5);
+sessionStorage.setItem("viewers",v);
 viewer.innerText="👁 Viewers Online: "+v;
 
-/* TYPE */
+/* SEARCH COUNTER */
+let count=localStorage.getItem("count")||0;
+counter.innerText="🔎 Total Searches: "+count;
+
+/* TYPE EFFECT */
 function typeText(el,text){
 el.innerHTML="";let i=0;
 const t=setInterval(()=>{
-el.innerHTML+=text[i++];
-if(i>=text.length) clearInterval(t);
+el.innerHTML+=text[i++]||"";
+if(i>=text.length)clearInterval(t);
 },18);
 }
 
 /* HISTORY */
+const historyDiv=document.getElementById("history");
 let history=JSON.parse(localStorage.getItem("history"))||[];
 function renderHistory(){
 historyDiv.innerHTML="<b>Recent Searches:</b>";
@@ -275,11 +239,12 @@ function quickSearch(n){number.value=n;searchData();}
 
 /* CONFETTI */
 function confetti(){
-const c=confettiCanvas=document.getElementById("confetti");
+const c=document.getElementById("confetti");
 const ctx=c.getContext("2d");
 c.width=innerWidth;c.height=innerHeight;
 let p=[];
-for(let i=0;i<70;i++)p.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*6+2,dx:Math.random()*4-2,dy:Math.random()*4+2});
+for(let i=0;i<60;i++)
+p.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*5+2,dx:Math.random()*4-2,dy:Math.random()*4+2});
 let f=0;
 (function d(){
 ctx.clearRect(0,0,c.width,c.height);
@@ -292,46 +257,79 @@ if(f++<60)requestAnimationFrame(d);
 })();
 }
 
+/* DETECT */
+function detectType(n){
+if(/^\d{11}$/.test(n))return"📱 Phone Number";
+if(/^\d{13}$/.test(n))return"🆔 CNIC Number";
+return"🔍 Unknown Format";
+}
+
+/* PROGRESS */
+function fakeProgress(){
+progress.style.width="0%";
+let p=0;
+const t=setInterval(()=>{
+p+=Math.random()*15;
+progress.style.width=Math.min(p,100)+"%";
+if(p>=100)clearInterval(t);
+},300);
+}
+
 /* SEARCH */
 function searchData(){
 clickSound.play();
 const num=number.value.trim();
-if(!num){typeText(result,"ERROR: Enter a number");return;}
+if(!num){
+result.classList.add("shake");
+typeText(result,"❌ ERROR: Enter valid number");
+return;
+}
 loader.style.display="block";
-typeText(result,"Fetching data...");
+fakeProgress();
+typeText(result,"⏳ Fetching "+detectType(num)+" ...");
 
 fetch("https://api.allorigins.win/raw?url="+encodeURIComponent("https://api.cnic.pro/?num="+num))
 .then(r=>r.text())
 .then(text=>{
 loader.style.display="none";
+confetti();
+successSound.play();
+result.classList.add("pop");
+result.innerText="✅ SUCCESS\n\n"+text;
+
 if(!history.includes(num)){
 history.unshift(num);history=history.slice(0,5);
 localStorage.setItem("history",JSON.stringify(history));
 renderHistory();
 }
-confetti();
-result.innerHTML=text;
+count++;
+localStorage.setItem("count",count);
+counter.innerText="🔎 Total Searches: "+count;
 })
 .catch(()=>{
 loader.style.display="none";
-typeText(result,"ERROR: Fetch failed");
+typeText(result,"❌ SERVER ERROR");
 });
 }
 
 /* COPY */
 function copyResult(){
 navigator.clipboard.writeText(result.innerText);
-alert("Result copied");
+alert("Copied!");
 }
 
-/* TELEGRAM SHARE */
+/* SHARE */
 function shareTelegram(){
-const text=encodeURIComponent(result.innerText+"\n\nJoin: https://t.me/devil_inside5");
-window.open("https://t.me/share/url?text="+text,"_blank");
+const t=encodeURIComponent(result.innerText+"\n\nJoin: https://t.me/devil_inside5");
+window.open("https://t.me/share/url?text="+t,"_blank");
 }
+
+/* ENTER KEY */
+number.addEventListener("keydown",e=>{
+if(e.key==="Enter")searchData();
+});
 
 renderHistory();
 </script>
-
 </body>
 </html>
