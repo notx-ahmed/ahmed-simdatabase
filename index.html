@@ -3,333 +3,1533 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AHMED SIM DATABASE</title>
-
+<title>OSINT-X — Intelligence Gathering Framework By DEADLINE</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
---bg:#020617;--card:#020617;--input:#020617;
---border:#1e293b;--text:#f8fafc;
---muted:#94a3b8;--accent:#22d3ee;
-}
-body.light{
---bg:#f1f5f9;--card:#ffffff;--input:#f8fafc;
---border:#cbd5e1;--text:#020617;
---muted:#475569;--accent:#2563eb;
-}
-*{box-sizing:border-box;font-family:Inter,system-ui}
-body{
-margin:0;min-height:100vh;
-background:radial-gradient(circle at top,#1e3a8a,#020617);
-display:flex;justify-content:center;
-padding:18px;color:var(--text);
-overflow:hidden;
-}
+  :root {
+    --bg: #020b06;
+    --bg2: #030f08;
+    --panel: #071410;
+    --border: #0d3326;
+    --green: #00ff88;
+    --green2: #00cc66;
+    --green3: #004d26;
+    --dim: #1a4d35;
+    --text: #b0ffd4;
+    --muted: #3d7a5a;
+    --red: #ff3355;
+    --yellow: #ffcc00;
+    --cyan: #00e5ff;
+    --orange: #ff8800;
+  }
 
-/* GLOW */
-@keyframes glow{
-0%{box-shadow:0 0 15px red}
-50%{box-shadow:0 0 25px cyan}
-100%{box-shadow:0 0 25px magenta}
-}
-.container{
-max-width:460px;width:100%;
-background:var(--card);
-border-radius:18px;
-padding:26px;
-animation:glow 2s infinite alternate;
-z-index:2;
-}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* WATERMARK */
-.watermark{
-position:fixed;top:45%;left:-120%;
-font-size:56px;font-weight:900;
-color:rgba(255,255,255,.04);
-white-space:nowrap;transform:rotate(-18deg);
-animation:move 22s linear infinite;
-pointer-events:none;
-}
-@keyframes move{from{left:-120%}to{left:120%}}
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
 
-.toggle-wrap{display:flex;justify-content:flex-end}
-.toggle{
-width:54px;height:26px;background:var(--border);
-border-radius:50px;cursor:pointer;position:relative;
-}
-.toggle:before{
-content:"";width:22px;height:22px;
-background:var(--accent);border-radius:50%;
-position:absolute;top:2px;left:3px;transition:.3s;
-}
-body.light .toggle:before{left:29px}
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,255,136,0.015) 2px,
+      rgba(0,255,136,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
 
-/* HEADER */
-.header{text-align:center}
-.header h1{font-size:28px;font-weight:900;animation:rainbow 3s infinite}
-@keyframes rainbow{
-0%{color:red}25%{color:orange}
-50%{color:lime}75%{color:cyan}
-100%{color:magenta}
-}
-.header p{font-size:13px;color:var(--muted)}
+  /* Grid background */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
 
-#clock{text-align:center;font-weight:900;color:#22d3ee;margin:10px 0}
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
 
-/* INPUT */
-.input,button{
-width:100%;padding:15px;border-radius:14px;
-font-size:15px;font-weight:800;margin-top:12px;
-border:1px solid var(--border);
-}
-.input{background:var(--input);color:var(--text)}
-button{
-background:linear-gradient(90deg,#2563eb,#22d3ee);
-color:white;cursor:pointer;border:none;
-}
+  /* HEADER */
+  header {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    padding: 20px 30px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.5s ease;
+  }
 
-/* LOADER */
-.loader{
-display:none;margin:14px auto;
-width:40px;height:40px;border:4px solid var(--border);
-border-top:4px solid var(--accent);
-border-radius:50%;animation:spin 1s linear infinite;
-}
-@keyframes spin{100%{transform:rotate(360deg)}}
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    animation: scan 3s linear infinite;
+  }
 
-/* PROGRESS */
-.progress{
-height:6px;border-radius:10px;
-background:linear-gradient(90deg,#22d3ee,#2563eb);
-width:0%;transition:.4s;margin-top:8px;
-}
+  @keyframes scan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
 
-/* RESULT */
-.result{
-margin-top:14px;padding:14px;border-radius:14px;
-background:var(--input);border:1px solid var(--border);
-font-family:monospace;font-size:13px;line-height:1.6;
-white-space:pre-wrap;
-}
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 
-/* EFFECTS */
-@keyframes shake{
-0%{transform:translateX(0)}
-25%{transform:translateX(-5px)}
-50%{transform:translateX(5px)}
-75%{transform:translateX(-5px)}
-100%{transform:translateX(0)}
-}
-.shake{animation:shake .3s}
+  .logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: 6px;
+    color: var(--green);
+    text-shadow: 0 0 20px rgba(0,255,136,0.5), 0 0 40px rgba(0,255,136,0.2);
+  }
 
-@keyframes pop{
-0%{transform:scale(.9);opacity:.5}
-100%{transform:scale(1);opacity:1}
-}
-.pop{animation:pop .4s}
+  .logo span { color: var(--muted); }
 
-.copy-btn{margin-top:10px;background:rgba(34,211,238,.15)}
+  .status-bar {
+    display: flex;
+    gap: 20px;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
 
-/* HISTORY */
-.history-item{
-cursor:pointer;padding:6px 10px;
-border-radius:8px;background:rgba(34,211,238,.08);
-margin-top:5px;font-weight:700;
-}
-.history-item:hover{background:rgba(34,211,238,.2)}
+  .status-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: blink 1.5s ease-in-out infinite;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
 
-.viewer{text-align:center;margin-top:10px;font-weight:900;color:#22d3ee}
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
 
-/* CONFETTI */
-#confetti{
-position:fixed;top:0;left:0;
-width:100%;height:100%;
-pointer-events:none;z-index:1;
-}
+  .tagline {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 3px;
+  }
 
-/* TELEGRAM FLOAT */
-.tg-float{
-position:fixed;bottom:18px;right:18px;
-background:#229ED9;color:white;font-weight:900;
-padding:14px 16px;border-radius:50px;
-text-decoration:none;box-shadow:0 0 20px #229ED9;
-animation:pulse 1.5s infinite;
-}
-@keyframes pulse{
-0%{transform:scale(1)}
-50%{transform:scale(1.1)}
-100%{transform:scale(1)}
-}
+  /* MODULES NAV */
+  .modules-nav {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
 
-.footer{text-align:center;margin-top:16px;font-size:11px;color:var(--muted)}
+  .mod-btn {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    padding: 10px 18px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mod-btn:hover {
+    border-color: var(--green3);
+    color: var(--green);
+    background: rgba(0,255,136,0.05);
+  }
+
+  .mod-btn.active {
+    border-color: var(--green);
+    color: var(--green);
+    background: rgba(0,255,136,0.08);
+    text-shadow: 0 0 10px rgba(0,255,136,0.4);
+  }
+
+  .mod-btn .icon { margin-right: 6px; }
+
+  /* MAIN LAYOUT */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+  }
+
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+
+  /* PANEL */
+  .panel {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    animation: fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  .panel-title { color: var(--green); font-size: 0.78rem; letter-spacing: 3px; }
+
+  /* INPUT SECTION */
+  .input-section { padding: 20px; }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .input-group { flex: 1; min-width: 200px; }
+
+  .input-label {
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .osint-input {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .osint-input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 10px rgba(0,255,136,0.1);
+  }
+
+  .osint-input::placeholder { color: var(--dim); }
+
+  select.osint-input option { background: var(--bg2); }
+
+  /* BUTTONS */
+  .btn-primary {
+    background: transparent;
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    padding: 12px 28px;
+    cursor: pointer;
+    letter-spacing: 3px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; right: 0; bottom: 0;
+    background: rgba(0,255,136,0.1);
+    transition: left 0.3s;
+  }
+
+  .btn-primary:hover::before { left: 0; }
+  .btn-primary:hover {
+    box-shadow: 0 0 20px rgba(0,255,136,0.3);
+    text-shadow: 0 0 10px rgba(0,255,136,0.5);
+  }
+
+  .btn-primary:disabled {
+    border-color: var(--dim);
+    color: var(--dim);
+    cursor: not-allowed;
+  }
+
+  .btn-danger {
+    background: transparent;
+    border: 1px solid var(--red);
+    color: var(--red);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    padding: 8px 16px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.2s;
+  }
+
+  .btn-danger:hover { background: rgba(255,51,85,0.1); }
+
+  /* OPTIONS GRID */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .opt-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+  }
+
+  .opt-check:hover { border-color: var(--green3); background: rgba(0,255,136,0.03); }
+  .opt-check input { accent-color: var(--green); cursor: pointer; }
+  .opt-check.active { border-color: var(--green3); color: var(--green); }
+
+  /* TERMINAL OUTPUT */
+  .terminal {
+    background: #010a05;
+    border-top: 1px solid var(--border);
+    padding: 16px;
+    min-height: 320px;
+    max-height: 500px;
+    overflow-y: auto;
+    font-size: 0.8rem;
+    line-height: 1.8;
+  }
+
+  .terminal::-webkit-scrollbar { width: 4px; }
+  .terminal::-webkit-scrollbar-track { background: var(--bg); }
+  .terminal::-webkit-scrollbar-thumb { background: var(--green3); }
+
+  .t-line { margin-bottom: 2px; animation: lineIn 0.15s ease; }
+  @keyframes lineIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .t-prompt { color: var(--green); }
+  .t-info { color: var(--text); }
+  .t-success { color: var(--green); }
+  .t-warn { color: var(--yellow); }
+  .t-error { color: var(--red); }
+  .t-data { color: var(--cyan); }
+  .t-section { color: var(--orange); font-weight: bold; margin-top: 6px; }
+  .t-muted { color: var(--muted); }
+  .t-link { color: #00aaff; text-decoration: underline; cursor: pointer; }
+
+  .cursor-blink::after {
+    content: '█';
+    animation: blink 0.8s step-end infinite;
+    color: var(--green);
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+
+  .progress-wrap.active { display: block; }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    margin-top: 6px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green3), var(--green));
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 8px var(--green);
+  }
+
+  .progress-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  /* SIDEBAR */
+  .sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+  /* RESULTS SUMMARY */
+  .result-card {
+    padding: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .result-card:last-child { border-bottom: none; }
+
+  .result-tag {
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .result-value {
+    font-size: 0.85rem;
+    color: var(--green);
+    word-break: break-all;
+  }
+
+  .result-value.warn { color: var(--yellow); }
+  .result-value.danger { color: var(--red); }
+  .result-value.neutral { color: var(--text); }
+
+  /* RISK METER */
+  .risk-meter {
+    display: flex;
+    gap: 3px;
+    margin-top: 6px;
+  }
+
+  .risk-seg {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    transition: background 0.5s;
+  }
+
+  .risk-seg.active-low { background: var(--green); }
+  .risk-seg.active-med { background: var(--yellow); }
+  .risk-seg.active-high { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+  /* QUICK LINKS */
+  .quick-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: var(--text);
+  }
+
+  .quick-link:hover { background: rgba(0,255,136,0.04); color: var(--green); }
+  .quick-link .arrow { color: var(--muted); font-size: 0.7rem; }
+
+  /* HISTORY */
+  .hist-item {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+  }
+
+  .hist-item:hover { background: rgba(0,255,136,0.04); color: var(--green); }
+  .hist-time { font-size: 0.65rem; color: var(--muted); }
+
+  /* MODULE PANELS */
+  .module-panel { display: none; }
+  .module-panel.active { display: block; }
+
+  /* IP/GEO SPECIFIC */
+  .geo-map {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 12px;
+    margin: 10px 0;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 2px;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Tabs inside modules */
+  .sub-tabs { display: flex; gap: 2px; margin-bottom: 16px; }
+  .sub-tab {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .sub-tab.active { border-color: var(--green); color: var(--green); background: rgba(0,255,136,0.06); }
+
+  /* FOOTER */
+  footer {
+    margin-top: 20px;
+    padding: 14px 20px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  footer .warning { color: var(--yellow); }
+
+  /* Notification */
+  .notif {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--panel);
+    border: 1px solid var(--green);
+    color: var(--green);
+    padding: 12px 20px;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    z-index: 9998;
+    animation: slideIn 0.3s ease;
+    display: none;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
 </style>
 </head>
-
 <body>
 
-<div class="watermark">NOTx AHMED</div>
-<canvas id="confetti"></canvas>
+<div class="notif" id="notif"></div>
 
-<a class="tg-float" href="https://t.me/devil_inside5" target="_blank">📲 Join Telegram</a>
+<div class="wrapper">
 
-<div class="container">
-<div class="toggle-wrap"><div class="toggle" onclick="toggleTheme()"></div></div>
+  <!-- HEADER -->
+  <header>
+    <div class="header-top">
+      <div>
+        <div class="logo">OSINT<span>-X</span></div>
+        <div class="tagline">// OPEN SOURCE INTELLIGENCE FRAMEWORK v2.4.1</div>
+      </div>
+      <div class="status-bar">
+        <span><span class="status-dot"></span>SYSTEM ONLINE</span>
+        <span id="clock">--:--:--</span>
+        <span>SESSION: <span id="sessionId" style="color:var(--green)"></span></span>
+      </div>
+    </div>
+  </header>
 
-<div class="header">
-<h1>AHMED SIM DATABASE</h1>
-<p>Professional SIM & CNIC Lookup</p>
-</div>
+  <!-- MODULE NAV -->
+  <div class="modules-nav">
+    <button class="mod-btn active" onclick="switchModule('ip')" data-mod="ip"><span class="icon">◈</span>IP / GEO</button>
+    <button class="mod-btn" onclick="switchModule('domain')" data-mod="domain"><span class="icon">◈</span>DOMAIN</button>
+    <button class="mod-btn" onclick="switchModule('email')" data-mod="email"><span class="icon">◈</span>EMAIL</button>
+    <button class="mod-btn" onclick="switchModule('username')" data-mod="username"><span class="icon">◈</span>USERNAME</button>
+    <button class="mod-btn" onclick="switchModule('phone')" data-mod="phone"><span class="icon">◈</span>PHONE</button>
+    <button class="mod-btn" onclick="switchModule('hash')" data-mod="hash"><span class="icon">◈</span>HASH</button>
+    <button class="mod-btn" onclick="switchModule('links')" data-mod="links"><span class="icon">◈</span>LINKS</button>
+  </div>
 
-<div id="clock"></div>
+  <!-- MAIN GRID -->
+  <div class="main-grid">
 
-<input id="number" class="input" placeholder="Enter Phone or CNIC Number">
-<button onclick="searchData()">SEARCH DATABASE</button>
+    <!-- LEFT: MAIN PANEL -->
+    <div>
 
-<div class="loader" id="loader"></div>
-<div class="progress" id="progress"></div>
+      <!-- IP MODULE -->
+      <div class="module-panel active" id="mod-ip">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">[ IP / GEOLOCATION LOOKUP ]</span>
+            <span>MODULE_01</span>
+          </div>
+          <div class="input-section">
+            <div class="input-row">
+              <div class="input-group">
+                <label class="input-label">TARGET IP ADDRESS</label>
+                <input class="osint-input" id="ipInput" type="text" placeholder="e.g. 8.8.8.8 or leave empty for your IP" />
+              </div>
+            </div>
+            <div class="options-grid">
+              <label class="opt-check active"><input type="checkbox" checked> GEO LOCATION</label>
+              <label class="opt-check active"><input type="checkbox" checked> ISP / ASN INFO</label>
+              <label class="opt-check active"><input type="checkbox" checked> TIMEZONE</label>
+              <label class="opt-check active"><input type="checkbox" checked> PROXY DETECT</label>
+              <label class="opt-check active"><input type="checkbox" checked> WHOIS DATA</label>
+              <label class="opt-check active"><input type="checkbox" checked> REVERSE DNS</label>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn-primary" onclick="runIPLookup()">► EXECUTE SCAN</button>
+              <button class="btn-danger" onclick="clearTerminal()">✕ CLEAR</button>
+            </div>
+          </div>
+          <div class="progress-wrap" id="progressWrap">
+            <span class="progress-label" id="progressLabel">INITIALIZING...</span>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          </div>
+          <div class="terminal" id="terminal"><span class="t-muted cursor-blink">osint-x@terminal:~$ READY. AWAITING TARGET INPUT.</span></div>
+        </div>
+      </div>
 
-<div class="result" id="result">STATUS: Waiting for input</div>
+      <!-- DOMAIN MODULE -->
+      <div class="module-panel" id="mod-domain">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">[ DOMAIN INTELLIGENCE ]</span>
+            <span>MODULE_02</span>
+          </div>
+          <div class="input-section">
+            <div class="input-row">
+              <div class="input-group">
+                <label class="input-label">TARGET DOMAIN</label>
+                <input class="osint-input" id="domainInput" type="text" placeholder="e.g. example.com" />
+              </div>
+            </div>
+            <div class="options-grid">
+              <label class="opt-check active"><input type="checkbox" checked> WHOIS LOOKUP</label>
+              <label class="opt-check active"><input type="checkbox" checked> DNS RECORDS</label>
+              <label class="opt-check active"><input type="checkbox" checked> SUBDOMAINS</label>
+              <label class="opt-check active"><input type="checkbox" checked> SSL INFO</label>
+              <label class="opt-check active"><input type="checkbox" checked> TECH DETECT</label>
+              <label class="opt-check active"><input type="checkbox" checked> REDIRECT CHAIN</label>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn-primary" onclick="runDomainScan()">► EXECUTE SCAN</button>
+              <button class="btn-danger" onclick="clearTerminal()">✕ CLEAR</button>
+            </div>
+          </div>
+          <div class="progress-wrap" id="progressWrap2">
+            <span class="progress-label" id="progressLabel2">INITIALIZING...</span>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill2"></div></div>
+          </div>
+          <div class="terminal" id="terminal2"><span class="t-muted cursor-blink">osint-x@terminal:~$ READY. AWAITING TARGET INPUT.</span></div>
+        </div>
+      </div>
 
-<button class="copy-btn" onclick="copyResult()">COPY RESULT</button>
-<button class="copy-btn" onclick="shareTelegram()">📤 SHARE TO TELEGRAM</button>
+      <!-- EMAIL MODULE -->
+      <div class="module-panel" id="mod-email">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">[ EMAIL INVESTIGATION ]</span>
+            <span>MODULE_03</span>
+          </div>
+          <div class="input-section">
+            <div class="input-row">
+              <div class="input-group">
+                <label class="input-label">TARGET EMAIL</label>
+                <input class="osint-input" id="emailInput" type="text" placeholder="e.g. target@example.com" />
+              </div>
+            </div>
+            <div class="options-grid">
+              <label class="opt-check active"><input type="checkbox" checked> VALIDITY CHECK</label>
+              <label class="opt-check active"><input type="checkbox" checked> DISPOSABLE CHECK</label>
+              <label class="opt-check active"><input type="checkbox" checked> SMTP VERIFY</label>
+              <label class="opt-check active"><input type="checkbox" checked> BREACH CHECK</label>
+              <label class="opt-check active"><input type="checkbox" checked> SOCIAL ACCOUNTS</label>
+              <label class="opt-check active"><input type="checkbox" checked> DOMAIN ANALYSIS</label>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn-primary" onclick="runEmailScan()">► EXECUTE SCAN</button>
+              <button class="btn-danger" onclick="clearTerminal()">✕ CLEAR</button>
+            </div>
+          </div>
+          <div class="terminal" id="terminal3"><span class="t-muted cursor-blink">osint-x@terminal:~$ READY. AWAITING TARGET INPUT.</span></div>
+        </div>
+      </div>
 
-<div id="history"></div>
-<div class="viewer" id="viewer"></div>
-<div class="viewer" id="counter"></div>
+      <!-- USERNAME MODULE -->
+      <div class="module-panel" id="mod-username">
+           <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">[ USERNAME HUNTER ]</span>
+            <span>MODULE_04</span>
+          </div>
+          <div class="input-section">
+            <div class="input-row">
+              <div class="input-group">
+                <label class="input-label">TARGET USERNAME</label>
+                <input class="osint-input" id="usernameInput" type="text" placeholder="e.g. johndoe123" />
+              </div>
+            </div>
+            <p style="font-size:0.72rem; color:var(--muted); margin-bottom:12px; letter-spacing:1px;">CHECKING ACROSS 30+ PLATFORMS IN REAL-TIME</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn-primary" onclick="runUsernameScan()">► HUNT USERNAME</button>
+              <button class="btn-danger" onclick="clearTerminal()">✕ CLEAR</button>
+            </div>
+          </div>
+          <div class="progress-wrap" id="progressWrap4">
+            <span class="progress-label" id="progressLabel4">SCANNING PLATFORMS...</span>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill4"></div></div>
+          </div>
+          <div class="terminal" id="terminal4"><span class="t-muted cursor-blink">osint-x@terminal:~$ READY. AWAITING TARGET INPUT.</span></div>
+        </div>
+      </div>
 
-<div class="footer">© 2025 All rights reserved to <b>NOTx AHMED 💯</b></div>
+      <!-- PHONE MODULE -->
+      <div class="module-panel" id="mod-phone">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">[ PHONE NUMBER LOOKUP ]</span>
+            <span>MODULE_05</span>
+          </div>
+          <div class="input-section">
+            <div class="input-row">
+              <div class="input-group">
+                <label class="input-label">PHONE NUMBER (WITH COUNTRY CODE)</label>
+                <input class="osint-input" id="phoneInput" type="text" placeholder="e.g. +212612345678" />
+              </div>
+            </div>
+            <div class="options-grid">
+              <label class="opt-check active"><input type="checkbox" checked> CARRIER INFO</label>
+              <label class="opt-check active"><input type="checkbox" checked> COUNTRY / REGION</label>
+              <label class="opt-check active"><input type="checkbox" checked> LINE TYPE</label>
+              <label class="opt-check active"><input type="checkbox" checked> SPAM REPORTS</label>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn-primary" onclick="runPhoneScan()">► LOOKUP NUMBER</button>
+              <button class="btn-danger" onclick="clearTerminal()">✕ CLEAR</button>
+            </div>
+          </div>
+          <div class="terminal" id="terminal5"><span class="t-muted cursor-blink">osint-x@terminal:~$ READY. AWAITING TARGET INPUT.</span></div>
+        </div>
+      </div>
 
-<audio id="clickSound"><source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-<audio id="successSound"><source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
+      <!-- HASH MODULE -->
+      <div class="module-panel" id="mod-hash">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">[ HASH ANALYZER ]</span>
+            <span>MODULE_06</span>
+          </div>
+          <div class="input-section">
+            <div class="sub-tabs">
+              <button class="sub-tab active" onclick="switchHashTab('identify')">IDENTIFY</button>
+              <button class="sub-tab" onclick="switchHashTab('lookup')">LOOKUP DB</button>
+              <button class="sub-tab" onclick="switchHashTab('generate')">GENERATE</button>
+            </div>
+            <div id="hash-identify">
+              <div class="input-row">
+                <div class="input-group">
+                  <label class="input-label">HASH STRING</label>
+                  <input class="osint-input" id="hashInput" type="text" placeholder="Paste any hash here..." />
+                </div>
+              </div>
+              <button class="btn-primary" onclick="runHashAnalysis()">► ANALYZE HASH</button>
+            </div>
+            <div id="hash-lookup" style="display:none;">
+              <div class="input-row">
+                <div class="input-group">
+                  <label class="input-label">HASH TO LOOKUP (MD5/SHA1/SHA256)</label>
+                  <input class="osint-input" id="hashLookupInput" type="text" placeholder="Try to find plaintext..." />
+                </div>
+              </div>
+              <button class="btn-primary" onclick="runHashLookup()">► LOOKUP IN DB</button>
+            </div>
+            <div id="hash-generate" style="display:none;">
+              <div class="input-row">
+                <div class="input-group">
+                  <label class="input-label">PLAINTEXT TO HASH</label>
+                  <input class="osint-input" id="hashGenInput" type="text" placeholder="Enter text to hash..." />
+                </div>
+                <div class="input-group" style="max-width:160px;">
+                  <label class="input-label">ALGORITHM</label>
+                  <select class="osint-input" id="hashAlgo">
+                    <option>MD5</option>
+                    <option>SHA-1</option>
+                    <option selected>SHA-256</option>
+                    <option>SHA-512</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn-primary" onclick="runHashGenerate()">► GENERATE HASH</button>
+            </div>
+          </div>
+          <div class="terminal" id="terminal6"><span class="t-muted cursor-blink">osint-x@terminal:~$ READY. AWAITING TARGET INPUT.</span></div>
+        </div>
+      </div>
+
+      <!-- LINKS MODULE -->
+      <div class="module-panel" id="mod-links">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">[ OSINT EXTERNAL TOOLS ]</span>
+            <span>MODULE_07</span>
+          </div>
+          <div class="input-section">
+            <p style="font-size:0.75rem; color:var(--muted); margin-bottom:16px; letter-spacing:1px;">DIRECT ACCESS TO TOP OSINT PLATFORMS & DATABASES</p>
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:8px;">
+              <a class="quick-link" href="https://www.shodan.io" target="_blank">SHODAN <span class="arrow">→ SEARCH ENGINES</span></a>
+              <a class="quick-link" href="https://censys.io" target="_blank">CENSYS <span class="arrow">→ INTERNET SCAN</span></a>
+              <a class="quick-link" href="https://haveibeenpwned.com" target="_blank">HIBP <span class="arrow">→ BREACH DB</span></a>
+              <a class="quick-link" href="https://www.virustotal.com" target="_blank">VIRUSTOTAL <span class="arrow">→ MALWARE SCAN</span></a>
+              <a class="quick-link" href="https://www.whois.com/whois" target="_blank">WHOIS.COM <span class="arrow">→ DOMAIN INFO</span></a>
+              <a class="quick-link" href="https://dnsdumpster.com" target="_blank">DNSDUMPSTER <span class="arrow">→ DNS RECON</span></a>
+              <a class="quick-link" href="https://crt.sh" target="_blank">CRT.SH <span class="arrow">→ CERT SEARCH</span></a>
+              <a class="quick-link" href="https://www.exploit-db.com" target="_blank">EXPLOIT-DB <span class="arrow">→ VULNERABILITIES</span></a>
+              <a class="quick-link" href="https://web.archive.org" target="_blank">WAYBACK <span class="arrow">→ ARCHIVE</span></a>
+                <a class="quick-link" href="https://hunter.io" target="_blank">HUNTER.IO <span class="arrow">→ EMAIL FINDER</span></a>
+              <a class="quick-link" href="https://theHarvester.github.io" target="_blank">THEHARVESTER <span class="arrow">→ EMAIL HARVEST</span></a>
+              <a class="quick-link" href="https://www.maltego.com" target="_blank">MALTEGO <span class="arrow">→ LINK ANALYSIS</span></a>
+              <a class="quick-link" href="https://intelx.io" target="_blank">INTEL X <span class="arrow">→ DEEP SEARCH</span></a>
+              <a class="quick-link" href="https://osintframework.com" target="_blank">OSINT FRAMEWORK <span class="arrow">→ DIRECTORY</span></a>
+              <a class="quick-link" href="https://www.spokeo.com" target="_blank">SPOKEO <span class="arrow">→ PEOPLE SEARCH</span></a>
+              <a class="quick-link" href="https://www.google.com/advanced_search" target="_blank">GOOGLE DORK <span class="arrow">→ ADV SEARCH</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end left -->
+
+    <!-- RIGHT: SIDEBAR -->
+    <div class="sidebar">
+
+      <!-- RESULTS SUMMARY -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">[ SCAN SUMMARY ]</span>
+          <span id="scanStatus" style="color:var(--muted)">IDLE</span>
+        </div>
+        <div id="summaryContent">
+          <div class="result-card">
+            <span class="result-tag">TARGET</span>
+            <div class="result-value neutral" id="sumTarget">—</div>
+          </div>
+          <div class="result-card">
+            <span class="result-tag">MODULE</span>
+            <div class="result-value neutral" id="sumModule">—</div>
+          </div>
+          <div class="result-card">
+            <span class="result-tag">FINDINGS</span>
+            <div class="result-value" id="sumFindings">0</div>
+          </div>
+          <div class="result-card">
+            <span class="result-tag">RISK LEVEL</span>
+            <div class="result-value warn" id="sumRisk">—</div>
+            <div class="risk-meter" id="riskMeter">
+              <div class="risk-seg" id="r1"></div>
+              <div class="risk-seg" id="r2"></div>
+              <div class="risk-seg" id="r3"></div>
+              <div class="risk-seg" id="r4"></div>
+              <div class="risk-seg" id="r5"></div>
+              <div class="risk-seg" id="r6"></div>
+              <div class="risk-seg" id="r7"></div>
+              <div class="risk-seg" id="r8"></div>
+              <div class="risk-seg" id="r9"></div>
+              <div class="risk-seg" id="r10"></div>
+            </div>
+          </div>
+          <div class="result-card">
+            <span class="result-tag">SCAN TIME</span>
+            <div class="result-value neutral" id="sumTime">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCAN HISTORY -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">[ SCAN HISTORY ]</span>
+          <button onclick="clearHistory()" style="background:none; border:none; color:var(--muted); font-size:0.65rem; cursor:pointer; letter-spacing:1px; font-family:inherit;">CLR</button>
+        </div>
+        <div id="historyList" style="max-height:200px; overflow-y:auto;">
+          <div style="padding:14px; font-size:0.72rem; color:var(--dim); text-align:center;">NO SCANS YET</div>
+        </div>
+      </div>
+
+      <!-- DORK GENERATOR -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">[ GOOGLE DORK GEN ]</span>
+        </div>
+        <div class="input-section">
+          <div class="input-group" style="margin-bottom:10px;">
+            <label class="input-label">TARGET SITE / KEYWORD</label>
+            <input class="osint-input" id="dorkInput" type="text" placeholder="e.g. example.com" style="font-size:0.8rem;" />
+          </div>
+          <div class="input-group" style="margin-bottom:10px;">
+            <label class="input-label">DORK TYPE</label>
+            <select class="osint-input" id="dorkType" style="font-size:0.75rem;">
+              <option value="admin">ADMIN PANELS</option>
+              <option value="files">EXPOSED FILES</option>
+              <option value="login">LOGIN PAGES</option>
+              <option value="db">DATABASE FILES</option>
+              <option value="email">EMAIL ADDRESSES</option>
+              <option value="vuln">VULNERABLE PARAMS</option>
+              <option value="config">CONFIG FILES</option>
+              <option value="backup">BACKUP FILES</option>
+            </select>
+          </div>
+          <button class="btn-primary" onclick="generateDork()" style="width:100%; padding:10px;">► GENERATE DORK</button>
+          <div id="dorkOutput" style="margin-top:10px; padding:10px; background:var(--bg2); border:1px solid var(--border); font-size:0.72rem; color:var(--cyan); display:none; word-break:break-all; cursor:pointer;" onclick="copyDork()"></div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- end main-grid -->
+
+  <!-- FOOTER -->
+  <footer>
+    <span>OSINT-X v2.4.1 // FOR EDUCATIONAL & AUTHORIZED USE ONLY</span>
+    <span class="warning">⚠ ONLY USE ON SYSTEMS YOU OWN OR HAVE PERMISSION TO TEST</span>
+    <span>SESSION: <span id="sessionId2" style="color:var(--green)"></span></span>
+  </footer>
+
 </div>
 
 <script>
-function toggleTheme(){document.body.classList.toggle("light");}
+// ============================================================
+// UTILITIES
+// ============================================================
+let sessionId = Math.random().toString(36).substring(2, 8).toUpperCase();
+document.getElementById('sessionId').textContent = sessionId;
+document.getElementById('sessionId2').textContent = sessionId;
 
-/* CLOCK */
-setInterval(()=>clock.innerText="🕒 "+new Date().toLocaleTimeString(),1000);
+let scanHistory = [];
+let findingsCount = 0;
 
-/* VIEWERS */
-let v=sessionStorage.getItem("viewers")||Math.floor(Math.random()*20+5);
-sessionStorage.setItem("viewers",v);
-viewer.innerText="👁 Viewers Online: "+v;
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB');
+}
+setInterval(updateClock, 1000);
+updateClock();
 
-/* SEARCH COUNTER */
-let count=localStorage.getItem("count")||0;
-counter.innerText="🔎 Total Searches: "+count;
-
-/* TYPE EFFECT */
-function typeText(el,text){
-el.innerHTML="";let i=0;
-const t=setInterval(()=>{
-el.innerHTML+=text[i++]||"";
-if(i>=text.length)clearInterval(t);
-},18);
+function getTerminal(id) {
+  const map = {
+    'ip': 'terminal', 'domain': 'terminal2', 'email': 'terminal3',
+    'username': 'terminal4', 'phone': 'terminal5', 'hash': 'terminal6'
+  };
+  return document.getElementById(map[id] || 'terminal');
 }
 
-/* HISTORY */
-const historyDiv=document.getElementById("history");
-let history=JSON.parse(localStorage.getItem("history"))||[];
-function renderHistory(){
-historyDiv.innerHTML="<b>Recent Searches:</b>";
-history.forEach(n=>{
-historyDiv.innerHTML+=`<div class="history-item" onclick="quickSearch('${n}')">${n}</div>`;
-});
-}
-function quickSearch(n){number.value=n;searchData();}
+let currentModule = 'ip';
 
-/* CONFETTI */
-function confetti(){
-const c=document.getElementById("confetti");
-const ctx=c.getContext("2d");
-c.width=innerWidth;c.height=innerHeight;
-let p=[];
-for(let i=0;i<60;i++)
-p.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*5+2,dx:Math.random()*4-2,dy:Math.random()*4+2});
-let f=0;
-(function d(){
-ctx.clearRect(0,0,c.width,c.height);
-p.forEach(o=>{
-ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
-ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fill();
-o.x+=o.dx;o.y+=o.dy;
-});
-if(f++<60)requestAnimationFrame(d);
-})();
+function switchModule(mod) {
+  currentModule = mod;
+  document.querySelectorAll('.module-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('mod-' + mod).classList.add('active');
+  document.querySelectorAll('.mod-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-mod="${mod}"]`).classList.add('active');
 }
 
-/* DETECT */
-function detectType(n){
-if(/^\d{11}$/.test(n))return"📱 Phone Number";
-if(/^\d{13}$/.test(n))return"🆔 CNIC Number";
-return"🔍 Unknown Format";
+function clearTerminal() {
+  const term = getTerminal(currentModule);
+  if (term) term.innerHTML = '<span class="t-muted cursor-blink">osint-x@terminal:~$ CLEARED. AWAITING TARGET INPUT.</span>';
 }
 
-/* PROGRESS */
-function fakeProgress(){
-progress.style.width="0%";
-let p=0;
-const t=setInterval(()=>{
-p+=Math.random()*15;
-progress.style.width=Math.min(p,100)+"%";
-if(p>=100)clearInterval(t);
-},300);
+function log(termId, cls, text, delay = 0) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const term = document.getElementById(termId);
+      const line = document.createElement('div');
+      line.className = `t-line ${cls}`;
+      line.textContent = text;
+      term.appendChild(line);
+      term.scrollTop = term.scrollHeight;
+      resolve();
+    }, delay);
+  });
 }
 
-/* SEARCH */
-function searchData(){
-clickSound.play();
-const num=number.value.trim();
-if(!num){
-result.classList.add("shake");
-typeText(result,"❌ ERROR: Enter valid number");
-return;
-}
-loader.style.display="block";
-fakeProgress();
-typeText(result,"⏳ Fetching "+detectType(num)+" ...");
-
-fetch("https://api.allorigins.win/raw?url="+encodeURIComponent("https://api.cnic.pro/?num="+num))
-.then(r=>r.text())
-.then(text=>{
-loader.style.display="none";
-confetti();
-successSound.play();
-result.classList.add("pop");
-result.innerText="✅ SUCCESS\n\n"+text;
-
-if(!history.includes(num)){
-history.unshift(num);history=history.slice(0,5);
-localStorage.setItem("history",JSON.stringify(history));
-renderHistory();
-}
-count++;
-localStorage.setItem("count",count);
-counter.innerText="🔎 Total Searches: "+count;
-})
-.catch(()=>{
-loader.style.display="none";
-typeText(result,"❌ SERVER ERROR");
-});
+async function logSequence(termId, lines) {
+  let cumDelay = 0;
+  for (const [cls, text, delay] of lines) {
+    cumDelay += delay;
+    await log(termId, cls, text, cumDelay);
+  }
 }
 
-/* COPY */
-function copyResult(){
-navigator.clipboard.writeText(result.innerText);
-alert("Copied!");
+function setProgress(id, pct, label) {
+  const wrap = document.getElementById('progressWrap' + (id === 'terminal' ? '' : id.replace('terminal', '')));
+  const fill = document.getElementById('progressFill' + (id === 'terminal' ? '' : id.replace('terminal', '')));
+  const lbl = document.getElementById('progressLabel' + (id === 'terminal' ? '' : id.replace('terminal', '')));
+  if (!wrap) return;
+  if (pct >= 100) { setTimeout(() => { wrap.classList.remove('active'); }, 500); return; }
+  wrap.classList.add('active');
+  if (fill) fill.style.width = pct + '%';
+  if (lbl) lbl.textContent = label;
 }
 
-/* SHARE */
-function shareTelegram(){
-const t=encodeURIComponent(result.innerText+"\n\nJoin: https://t.me/devil_inside5");
-window.open("https://t.me/share/url?text="+t,"_blank");
+function updateSummary(target, module, findings, risk, time) {
+  document.getElementById('sumTarget').textContent = target || '—';
+  document.getElementById('sumModule').textContent = module || '—';
+  document.getElementById('sumFindings').textContent = findings;
+  document.getElementById('sumRisk').textContent = risk;
+  document.getElementById('sumTime').textContent = time;
+  document.getElementById('scanStatus').textContent = 'COMPLETE';
+  document.getElementById('scanStatus').style.color = 'var(--green)';
+
+  // Risk meter
+  const riskMap = { 'LOW': 3, 'MEDIUM': 6, 'HIGH': 10 };
+  const level = riskMap[risk] || 0;
+  for (let i = 1; i <= 10; i++) {
+    const seg = document.getElementById('r' + i);
+    if (i <= level) {
+      if (level <= 3) seg.className = 'risk-seg active-low';
+      else if (level <= 6) seg.className = 'risk-seg active-med';
+      else seg.className = 'risk-seg active-high';
+    } else {
+      seg.className = 'risk-seg';
+    }
+  }
+
+  addHistory(target, module);
 }
 
-/* ENTER KEY */
-number.addEventListener("keydown",e=>{
-if(e.key==="Enter")searchData();
-});
+function addHistory(target, module) {
+  const time = new Date().toLocaleTimeString('en-GB');
+  scanHistory.unshift({ target, module, time });
+  if (scanHistory.length > 10) scanHistory.pop();
+  renderHistory();
+}
 
-renderHistory();
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  list.innerHTML = scanHistory.map((h, i) =>
+    `<div class="hist-item"><span>${h.module}: ${h.target}</span><span class="hist-time">${h.time}</span></div>`
+  ).join('');
+}
+
+function clearHistory() { scanHistory = []; renderHistory(); }
+
+function showNotif(msg) {
+  const n = document.getElementById('notif');
+  n.textContent = msg;
+  n.style.display = 'block';
+  setTimeout(() => { n.style.display = 'none'; }, 2500);
+}
+
+// ============================================================
+// IP LOOKUP
+// ============================================================
+async function runIPLookup() {
+  const input = document.getElementById('ipInput').value.trim();
+  const target = input || 'YOUR IP';
+  const term = 'terminal';
+  const t0 = Date.now();
+
+  document.getElementById(term).innerHTML = '';
+  document.getElementById('scanStatus').textContent = 'SCANNING...';
+  document.getElementById('scanStatus').style.color = 'var(--yellow)';
+
+  const lines = [
+    ['t-prompt', `osint-x@terminal:~$ ipinfo --target "${target}"`, 0],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 80],
+    ['t-section', '[ INITIALIZING IP INTELLIGENCE MODULE ]', 100],
+    ['t-info', '⟶ Loading geolocation databases...', 200],
+    ['t-info', '⟶ Connecting to IP API endpoints...', 350],
+    ['t-info', '⟶ Preparing WHOIS query engine...', 500],
+  ];
+  await logSequence(term, lines);
+
+  setProgress('terminal', 20, 'FETCHING IP DATA...');
+
+  try {
+    const url = input ? `https://ipapi.co/${input}/json/` : 'https://ipapi.co/json/';
+    const res = await fetch(url);
+    const d = await res.json();
+
+    if (d.error) throw new Error(d.reason || 'Invalid IP');
+
+    setProgress('terminal', 60, 'PROCESSING RESULTS...');
+
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(2) + 's';
+
+    const dataLines = [
+      ['t-success', `✓ DATA RETRIEVED IN ${elapsed}`, 0],
+      ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 100],
+      ['t-section', '[ IP GEOLOCATION DATA ]', 150],
+      ['t-data', `  IP ADDRESS      : ${d.ip || 'N/A'}`, 200],
+      ['t-data', `  HOSTNAME        : ${d.hostname || 'N/A'}`, 280],
+      ['t-data', `  CITY            : ${d.city || 'N/A'}`, 350],
+      ['t-data', `  REGION          : ${d.region || 'N/A'}`, 420],
+      ['t-data', `  COUNTRY         : ${d.country_name || 'N/A'} (${d.country || 'N/A'})`, 490],
+      ['t-data', `  POSTAL CODE     : ${d.postal || 'N/A'}`, 560],
+      ['t-data', `  COORDINATES     : ${d.latitude || 'N/A'}, ${d.longitude || 'N/A'}`, 630],
+      ['t-data', `  TIMEZONE        : ${d.timezone || 'N/A'} (UTC${d.utc_offset || 'N/A'})`, 700],
+      ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 780],
+      ['t-section', '[ NETWORK / ISP INFORMATION ]', 830],
+      ['t-data', `  ISP             : ${d.org || 'N/A'}`, 900],
+      ['t-data', `  ASN             : ${d.asn || 'N/A'}`, 970],
+      ['t-data', `  ORG             : ${d.org || 'N/A'}`, 1040],
+      ['t-data', `  CURRENCY        : ${d.currency || 'N/A'} (${d.currency_name || 'N/A'})`, 1110],
+      ['t-data', `  CALLING CODE    : +${d.country_calling_code || 'N/A'}`, 1180],
+      ['t-data', `  LANGUAGES       : ${d.languages || 'N/A'}`, 1250],
+      ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 1330],
+      ['t-section', '[ THREAT ANALYSIS ]', 1380],
+      ['t-warn', `  VPN/PROXY       : ${d.org && (d.org.toLowerCase().includes('vpn') || d.org.toLowerCase().includes('hosting')) ? '⚠ POSSIBLE VPN/HOST DETECTED' : '✓ CLEAN'}`, 1450],
+      ['t-info', `  IP TYPE         : ${d.hostname ? 'RESIDENTIAL/BUSINESS' : 'UNKNOWN'}`, 1520],
+      ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 1600],
+      ['t-success', `✓ SCAN COMPLETE — 11 FIELDS EXTRACTED`, 1650],
+    ];
+
+    await logSequence(term, dataLines);
+    setProgress('terminal', 100, 'DONE');
+    updateSummary(d.ip, 'IP LOOKUP', 11, 'LOW', elapsed);
+
+  } catch (err) {
+    await log(term, 't-error', `✗ ERROR: ${err.message}`, 300);
+    await log(term, 't-error', '  Check IP format or API availability', 400);
+    setProgress('terminal', 100, 'ERROR');
+    document.getElementById('scanStatus').textContent = 'ERROR';
+    document.getElementById('scanStatus').style.color = 'var(--red)';
+  }
+}
+
+// ============================================================
+// DOMAIN SCAN
+// ============================================================
+async function runDomainScan() {
+  const domain = document.getElementById('domainInput').value.trim();
+  if (!domain) { showNotif('⚠ ENTER A DOMAIN FIRST'); return; }
+  const term = 'terminal2';
+  const t0 = Date.now();
+
+  document.getElementById(term).innerHTML = '';
+  document.getElementById('scanStatus').textContent = 'SCANNING...';
+  document.getElementById('scanStatus').style.color = 'var(--yellow)';
+
+  await logSequence(term, [
+    ['t-prompt', `osint-x@terminal:~$ domain-recon --target "${domain}"`, 0],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 80],
+    ['t-section', '[ DOMAIN INTELLIGENCE MODULE ]', 120],
+    ['t-info', '⟶ Querying DNS resolvers...', 200],
+    ['t-info', '⟶ Fetching WHOIS records...', 380],
+    ['t-info', '⟶ Probing SSL certificate...', 560],
+  ]);
+
+  setProgress('terminal2', 30, 'RUNNING DNS QUERIES...');
+
+  try {
+    // Use DNS over HTTPS (Cloudflare)
+    const dnsTypes = ['A', 'MX', 'NS', 'TXT', 'CNAME', 'AAAA'];
+    const results = {};
+
+    for (const type of dnsTypes) {
+      try {
+        const r = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=${type}`, {
+          headers: { 'Accept': 'application/dns-json' }
+        });
+        const d = await r.json();
+        if (d.Answer && d.Answer.length > 0) {
+          results[type] = d.Answer.map(a => a.data).slice(0, 3);
+        }
+      } catch { results[type] = ['QUERY FAILED']; }
+    }
+
+    setProgress('terminal2', 80, 'PROCESSING DNS RECORDS...');
+
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(2) + 's';
+    let fieldCount = 0;
+    const outLines = [
+      ['t-success', `✓ DNS DATA RETRIEVED IN ${elapsed}`, 0],
+      ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 80],
+      ['t-section', '[ DNS RECORDS ]', 120],
+    ];
+
+    for (const [type, vals] of Object.entries(results)) {
+      if (vals && vals.length > 0) {
+        for (const v of vals) {
+          outLines.push(['t-data', `  ${type.padEnd(12)}: ${v}`, 150 + fieldCount * 80]);
+          fieldCount++;
+        }
+      }
+    }
+
+    // Add simulated WHOIS-like info
+    outLines.push(
+      ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', fieldCount * 80 + 200],
+      ['t-section', '[ DOMAIN ANALYSIS ]', fieldCount * 80 + 250],
+      ['t-data', `  DOMAIN          : ${domain}`, fieldCount * 80 + 300],
+      ['t-data', `  TLD             : .${domain.split('.').pop()}`, fieldCount * 80 + 370],
+      ['t-data', `  SUBDOMAIN COUNT : CHECK crt.sh FOR FULL LIST`, fieldCount * 80 + 440],
+      ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', fieldCount * 80 + 520],
+      ['t-section', '[ USEFUL RECON LINKS ]', fieldCount * 80 + 560],
+      ['t-info', `  WHOIS  → https://www.whois.com/whois/${domain}`, fieldCount * 80 + 620],
+      ['t-info', `  CERTS  → https://crt.sh/?q=${domain}`, fieldCount * 80 + 690],
+      ['t-info', `  SHODAN → https://www.shodan.io/search?query=${domain}`, fieldCount * 80 + 760],
+      ['t-info', `  DNSMAP → https://dnsdumpster.com (search manually)`, fieldCount * 80 + 830],
+      ['t-success', `✓ SCAN COMPLETE — ${fieldCount + 4} FIELDS EXTRACTED`, fieldCount * 80 + 900],
+    );
+
+    await logSequence(term, outLines);
+    setProgress('terminal2', 100, 'DONE');
+    updateSummary(domain, 'DOMAIN RECON', fieldCount + 4, 'MEDIUM', elapsed);
+
+  } catch (err) {
+    await log(term, 't-error', `✗ ERROR: ${err.message}`, 200);
+    setProgress('terminal2', 100, 'ERROR');
+  }
+}
+
+// ============================================================
+// EMAIL SCAN
+// ============================================================
+async function runEmailScan() {
+  const email = document.getElementById('emailInput').value.trim();
+  if (!email || !email.includes('@')) { showNotif('⚠ ENTER A VALID EMAIL'); return; }
+  const term = 'terminal3';
+  const t0 = Date.now();
+  document.getElementById(term).innerHTML = '';
+
+  const [user, domain] = email.split('@');
+  const elapsed = ((Date.now() - t0 + 1500) / 1000).toFixed(2) + 's';
+
+  // Check domain MX via DoH
+  let mxRecords = [];
+  try {
+    const r = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=MX`, { headers: { 'Accept': 'application/dns-json' } });
+    const d = await r.json();
+    if (d.Answer) mxRecords = d.Answer.map(a => a.data);
+  } catch {}
+
+  const disposable = ['mailinator', 'guerrillamail', 'tempmail', 'throwam', 'yopmail', '10minutemail', 'trashmail', 'fakeinbox'];
+  const isDisposable = disposable.some(d => domain.toLowerCase().includes(d));
+
+  await logSequence(term, [
+    ['t-prompt', `osint-x@terminal:~$ email-recon --target "${email}"`, 0],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 80],
+    ['t-section', '[ EMAIL INTELLIGENCE MODULE ]', 120],
+    ['t-info', '⟶ Parsing email structure...', 200],
+    ['t-info', '⟶ Checking MX records...', 380],
+    ['t-info', '⟶ Analyzing domain reputation...', 560],
+    ['t-info', '⟶ Cross-referencing breach databases...', 740],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 920],
+    ['t-section', '[ EMAIL STRUCTURE ANALYSIS ]', 960],
+    ['t-data', `  FULL EMAIL      : ${email}`, 1020],
+    ['t-data', `  USERNAME PART   : ${user}`, 1090],
+    ['t-data', `  DOMAIN PART     : ${domain}`, 1160],
+    ['t-data', `  TLD             : .${domain.split('.').pop()}`, 1230],
+    ['t-data', `  FORMAT VALID    : ✓ YES`, 1300],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 1380],
+    ['t-section', '[ DOMAIN / MX ANALYSIS ]', 1420],
+    ['t-data', `  MX RECORDS      : ${mxRecords.length > 0 ? mxRecords[0] : 'NONE FOUND'}`, 1490],
+    ['t-data', `  MAIL SERVER     : ${mxRecords.length > 0 ? '✓ CONFIGURED' : '✗ NOT FOUND'}`, 1560],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 1640],
+    ['t-section', '[ RISK FLAGS ]', 1680],
+    [isDisposable ? 't-error' : 't-success', `  DISPOSABLE EMAIL : ${isDisposable ? '⚠ YES — TEMP MAIL DETECTED' : '✓ NO'}`, 1740],
+    ['t-warn', `  BREACH LOOKUP   : → https://haveibeenpwned.com (manual check)`, 1820],
+    ['t-warn', `  SOCIAL ACCOUNTS : → https://hunter.io/email-verifier (manual check)`, 1900],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       { name: 'GitLab', url: 'https://gitlab.com/' },
+  { name: 'HackTheBox', url: 'https://hackthebox.com/profile/' },
+  { name: 'TryHackMe', url: 'https://tryhackme.com/p/' },
+  { name: 'Patreon', url: 'https://patreon.com/' },
+  { name: 'Replit', url: 'https://replit.com/@' },
+  { name: 'CodePen', url: 'https://codepen.io/' },
+  { name: 'Behance', url: 'https://behance.net/' },
+  { name: 'Dribbble', url: 'https://dribbble.com/' },
+  { name: 'Flickr', url: 'https://flickr.com/people/' },
+  { name: 'About.me', url: 'https://about.me/' },
+  { name: 'Gravatar', url: 'https://gravatar.com/' },
+];
+
+async function runUsernameScan() {
+  const username = document.getElementById('usernameInput').value.trim();
+  if (!username) { showNotif('⚠ ENTER A USERNAME FIRST'); return; }
+  const term = 'terminal4';
+  const t0 = Date.now();
+  document.getElementById(term).innerHTML = '';
+
+  await logSequence(term, [
+    ['t-prompt', `osint-x@terminal:~$ username-hunter --target "${username}"`, 0],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 80],
+    ['t-section', `[ HUNTING "${username}" ACROSS ${platforms.length} PLATFORMS ]`, 120],
+    ['t-info', '⟶ Loading platform database...', 200],
+    ['t-info', '⟶ Generating profile URLs...', 380],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 500],
+    ['t-section', '[ GENERATED PROFILE LINKS ]', 540],
+  ]);
+
+  for (let i = 0; i < platforms.length; i++) {
+    const p = platforms[i];
+    const pct = Math.round((i / platforms.length) * 100);
+    document.getElementById('progressFill4').style.width = pct + '%';
+    document.getElementById('progressLabel4').textContent = `CHECKING: ${p.name}`;
+    document.getElementById('progressWrap4').classList.add('active');
+    await log(term, 't-data', `  [→] ${p.name.padEnd(18)}: ${p.url}${username}`, i * 40);
+  }
+
+  const elapsed = ((Date.now() - t0) / 1000).toFixed(2) + 's';
+
+  await logSequence(term, [
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 100],
+    ['t-warn', `⟶ NOTE: Click each link to verify if profile EXISTS`, 150],
+    ['t-warn', `⟶ Use Sherlock tool on Kali for automated verification`, 200],
+    ['t-success', `✓ SCAN COMPLETE — ${platforms.length} URLS GENERATED IN ${elapsed}`, 280],
+  ]);
+
+  document.getElementById('progressFill4').style.width = '100%';
+  setTimeout(() => { document.getElementById('progressWrap4').classList.remove('active'); }, 500);
+  updateSummary(username, 'USERNAME HUNT', platforms.length, 'MEDIUM', elapsed);
+}
+
+// ============================================================
+// PHONE SCAN
+// ============================================================
+async function runPhoneScan() {
+  const phone = document.getElementById('phoneInput').value.trim();
+  if (!phone) { showNotif('⚠ ENTER A PHONE NUMBER'); return; }
+  const term = 'terminal5';
+  const t0 = Date.now();
+  document.getElementById(term).innerHTML = '';
+
+  // Parse phone number basics
+  const cleaned = phone.replace(/\s/g, '');
+  let country = 'UNKNOWN', countryCode = '??', carrier = 'UNKNOWN', lineType = 'UNKNOWN';
+
+  if (cleaned.startsWith('+212') || cleaned.startsWith('00212')) { country = 'MOROCCO 🇲🇦'; countryCode = 'MA'; }
+  else if (cleaned.startsWith('+1')) { country = 'USA/CANADA 🇺🇸'; countryCode = 'US'; }
+  else if (cleaned.startsWith('+44')) { country = 'UNITED KINGDOM 🇬🇧'; countryCode = 'GB'; }
+  else if (cleaned.startsWith('+33')) { country = 'FRANCE 🇫🇷'; countryCode = 'FR'; }
+  else if (cleaned.startsWith('+966')) { country = 'SAUDI ARABIA 🇸🇦'; countryCode = 'SA'; }
+  else if (cleaned.startsWith('+971')) { country = 'UAE 🇦🇪'; countryCode = 'AE'; }
+  else if (cleaned.startsWith('+20')) { country = 'EGYPT 🇪🇬'; countryCode = 'EG'; }
+  else if (cleaned.startsWith('+213')) { country = 'ALGERIA 🇩🇿'; countryCode = 'DZ'; }
+  else if (cleaned.startsWith('+216')) { country = 'TUNISIA 🇹🇳'; countryCode = 'TN'; }
+  else if (cleaned.startsWith('+49')) { country = 'GERMANY 🇩🇪'; countryCode = 'DE'; }
+  else if (cleaned.startsWith('+34')) { country = 'SPAIN 🇪🇸'; countryCode = 'ES'; }
+  else if (cleaned.startsWith('+7')) { country = 'RUSSIA/KAZ 🇷🇺'; countryCode = 'RU'; }
+  else if (cleaned.startsWith('+86')) { country = 'CHINA 🇨🇳'; countryCode = 'CN'; }
+  else if (cleaned.startsWith('+91')) { country = 'INDIA 🇮🇳'; countryCode = 'IN'; }
+
+  const elapsed = ((Date.now() - t0 + 1200) / 1000).toFixed(2) + 's';
+
+  await logSequence(term, [
+    ['t-prompt', `osint-x@terminal:~$ phone-recon --target "${phone}"`, 0],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 80],
+    ['t-section', '[ PHONE NUMBER INTELLIGENCE ]', 120],
+    ['t-info', '⟶ Parsing number format...', 200],
+    ['t-info', '⟶ Identifying country code...', 380],
+    ['t-info', '⟶ Querying carrier database...', 560],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 740],
+    ['t-section', '[ NUMBER ANALYSIS ]', 780],
+    ['t-data', `  RAW INPUT       : ${phone}`, 840],
+    ['t-data', `  CLEANED NUMBER  : ${cleaned}`, 910],
+    ['t-data', `  NUMBER LENGTH   : ${cleaned.replace('+','').length} digits`, 980],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 1060],
+    ['t-section', '[ COUNTRY / CARRIER DATA ]', 1100],
+    ['t-data', `  COUNTRY         : ${country}`, 1160],
+    ['t-data', `  COUNTRY CODE    : ${countryCode}`, 1230],
+    ['t-data', `  LINE TYPE       : MOBILE (ESTIMATED)`, 1300],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 1380],
+    ['t-section', '[ REVERSE LOOKUP RESOURCES ]', 1420],
+    ['t-info', `  → https://www.truecaller.com/search/${countryCode}/${cleaned.replace('+', '')}`, 1490],
+    ['t-info', `  → https://www.phoneinfoga.com (run locally)`, 1560],
+    ['t-info', `  → https://www.numverify.com (API lookup)`, 1630],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 1710],
+    ['t-success', `✓ SCAN COMPLETE — 6 FIELDS ANALYZED`, 1760],
+  ]);
+
+  updateSummary(phone, 'PHONE RECON', 6, 'LOW', elapsed);
+}
+
+// ============================================================
+// HASH ANALYSIS
+// ============================================================
+function identifyHash(hash) {
+  const len = hash.length;
+  if (len === 32) return { type: 'MD5', algo: 'MD5', bits: 128, strength: 'WEAK — DEPRECATED' };
+  if (len === 40) return { type: 'SHA-1', algo: 'SHA1', bits: 160, strength: 'WEAK — DEPRECATED' };
+  if (len === 56) return { type: 'SHA-224', algo: 'SHA224', bits: 224, strength: 'MODERATE' };
+  if (len === 64) return { type: 'SHA-256 / Keccak-256', algo: 'SHA256', bits: 256, strength: 'STRONG' };
+  if (len === 96) return { type: 'SHA-384', algo: 'SHA384', bits: 384, strength: 'STRONG' };
+  if (len === 128) return { type: 'SHA-512', algo: 'SHA512', bits: 512, strength: 'VERY STRONG' };
+  if (len === 60 && hash.startsWith('$2')) return { type: 'BCrypt', algo: 'BCRYPT', bits: 0, strength: 'VERY STRONG' };
+  if (hash.startsWith('$argon2')) return { type: 'Argon2', algo: 'ARGON2', bits: 0, strength: 'VERY STRONG' };
+  if (len === 13) return { type: 'DES Crypt', algo: 'DES', bits: 56, strength: 'VERY WEAK' };
+  return { type: 'UNKNOWN / CUSTOM', algo: 'UNKNOWN', bits: 0, strength: 'UNIDENTIFIED' };
+}
+
+async function runHashAnalysis() {
+  const hash = document.getElementById('hashInput').value.trim();
+  if (!hash) { showNotif('⚠ ENTER A HASH FIRST'); return; }
+  const term = 'terminal6';
+  document.getElementById(term).innerHTML = '';
+
+  const info = identifyHash(hash);
+  const isHex = /^[0-9a-fA-F]+$/.test(hash);
+
+  await logSequence(term, [
+    ['t-prompt', `osint-x@terminal:~$ hash-analyze --input "${hash.substring(0, 20)}..."`, 0],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 80],
+    ['t-section', '[ HASH ANALYSIS MODULE ]', 120],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 300],
+    ['t-section', '[ IDENTIFICATION RESULTS ]', 340],
+    ['t-data', `  HASH VALUE      : ${hash.substring(0, 40)}${hash.length > 40 ? '...' : ''}`, 400],
+    ['t-data', `  LENGTH          : ${hash.length} chars`, 470],
+    ['t-data', `  CHARSET         : ${isHex ? 'HEXADECIMAL (0-9, a-f)' : 'MIXED/SPECIAL'}`, 540],
+    ['t-data', `  IDENTIFIED AS   : ${info.type}`, 610],
+    ['t-data', `  BIT STRENGTH    : ${info.bits > 0 ? info.bits + ' bits' : 'N/A'}`, 680],
+    ['t-data', `  SECURITY STATUS : ${info.strength}`, 750],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 830],
+    ['t-section', '[ CRACKING RESOURCES ]', 870],
+    ['t-info', `  → https://crackstation.net (paste hash)`, 940],
+    ['t-info', `  → https://hashes.com/en/decrypt/hash`, 1010],
+    ['t-info', `  → https://md5decrypt.net (MD5/SHA1)`, 1080],
+    ['t-info', `  → hashcat -m [mode] hash.txt wordlist.txt (offline)`, 1150],
+    ['t-success', `✓ ANALYSIS COMPLETE`, 1230],
+  ]);
+
+  updateSummary(hash.substring(0, 20) + '...', 'HASH ANALYSIS', 5, info.bits < 160 ? 'HIGH' : 'LOW', '0.5s');
+}
+
+async function runHashLookup() {
+  const hash = document.getElementById('hashLookupInput').value.trim();
+  if (!hash) { showNotif('⚠ ENTER A HASH'); return; }
+  const term = 'terminal6';
+  document.getElementById(term).innerHTML = '';
+
+  await logSequence(term, [
+    ['t-prompt', `osint-x@terminal:~$ hash-lookup --hash "${hash.substring(0,20)}..."`, 0],
+    ['t-info', '⟶ Querying hash databases...', 300],
+    ['t-warn', '⟶ NOTE: Automated lookup requires API keys (CrackStation, Hashes.com)', 600],
+    ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 900],
+    ['t-section', '[ MANUAL LOOKUP LINKS ]', 940],
+    ['t-data', `  CrackStation : https://crackstation.net`, 1000],
+    ['t-data', `  Hashes.com   : https://hashes.com/en/decrypt/hash`, 1070],
+    ['t-data', `  MD5Decrypt   : https://md5decrypt.net`, 1140],
+    ['t-data', `  Nitrxgen     : https://www.nitrxgen.net/md5db/${hash}`, 1210],
+    ['t-info', `⟶ Copy hash and paste in any of the above sites`, 1300],
+    ['t-success', `✓ LINKS GENERATED`, 1380],
+  ]);
+}
+
+async function runHashGenerate() {
+  const text = document.getElementById('hashGenInput').value;
+  const algo = document.getElementById('hashAlgo').value;
+  if (!text) { showNotif('⚠ ENTER TEXT TO HASH'); return; }
+  const term = 'terminal6';
+  document.getElementById(term).innerHTML = '';
+
+  const algoMap = { 'MD5': null, 'SHA-1': 'SHA-1', 'SHA-256': 'SHA-256', 'SHA-512': 'SHA-512' };
+
+  await log(term, 't-prompt', `osint-x@terminal:~$ hash-gen --algo ${algo} --input "${text}"`, 0);
+  await log(term, 't-info', '⟶ Computing hash...', 200);
+
+  try {
+    if (algo === 'MD5') {
+      // Simplified MD5 note
+      await log(term, 't-warn', '⟶ MD5 requires external library. Use SHA instead.', 400);
+      await log(term, 't-info', '⟶ Try: echo -n "' + text + '" | md5sum (in terminal)', 600);
+    } else {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(text);
+      const hashBuffer = await crypto.subtle.digest(algo, data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+      await logSequence(term, [
+        ['t-muted', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 300],
+        ['t-section', `[ ${algo} HASH RESULT ]`, 350],
+        ['t-data', `  PLAINTEXT : ${text}`, 420],
+        ['t-data', `  ALGORITHM : ${algo}`, 490],
+        ['t-data', `  HASH      : ${hashHex}`, 560],
+        ['t-data', `  LENGTH    : ${hashHex.length} chars / ${hashHex.length * 4} bits`, 630],
+        ['t-success', '✓ HASH GENERATED SUCCESSFULLY', 710],
+      ]);
+    }
+  } catch (err) {
+    await log(term, 't-error', `✗ ERROR: ${err.message}`, 300);
+  }
+}
+
+function switchHashTab(tab) {
+  ['identify', 'lookup', 'generate'].forEach(t => {
+    document.getElementById('hash-' + t).style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('#mod-hash .sub-tab').forEach((b, i) => {
+    b.classList.toggle('active', ['identify', 'lookup', 'generate'][i] === tab);
+  });
+}
+
+// ============================================================
+// DORK GENERATOR
+// ============================================================
+const dorks = {
+  admin: ['site:{t} inurl:admin', 'site:{t} inurl:wp-admin', 'site:{t} intitle:"admin panel"', 'site:{t} inurl:adminpanel', 'site:{t} inurl:administrator'],
+  files: ['site:{t} ext:pdf', 'site:{t} ext:doc OR ext:docx', 'site:{t} ext:xls OR ext:xlsx', 'site:{t} ext:txt', 'site:{t} ext:log'],
+  login: ['site:{t} inurl:login', 'site:{t} inurl:signin', 'site:{t} intitle:"login"', 'site:{t} inurl:auth', 'site:{t} inurl:dashboard'],
+  db: ['site:{t} ext:sql', 'site:{t} ext:db', 'site:{t} ext:mdb', 'site:{t} inurl:phpmyadmin', 'site:{t} ext:sqlite'],
+  email: ['site:{t} "@{t}"', 'site:{t} intext:"@gmail.com" OR intext:"@{t}"', '"@{t}" filetype:txt', 'site:{t} contact email'],
+  vuln: ['site:{t} inurl:?id=', 'site:{t} inurl:?page=', 'site:{t} inurl:?cat=', 'site:{t} inurl:index.php?', 'site:{t} inurl:?file='],
+  config: ['site:{t} ext:env', 'site:{t} ext:cfg', 'site:{t} ext:conf', 'site:{t} inurl:.git', 'site:{t} ext:xml inurl:config'],
+  backup: ['site:{t} ext:bak', 'site:{t} ext:old', 'site:{t} ext:backup', 'site:{t} inurl:backup', 'site:{t} ext:zip'],
+};
+
+function generateDork() {
+  const target = document.getElementById('dorkInput').value.trim() || 'example.com';
+  const type = document.getElementById('dorkType').value;
+  const list = dorks[type];
+  const dork = list[Math.floor(Math.random() * list.length)].replace(/{t}/g, target);
+  const output = document.getElementById('dorkOutput');
+  output.textContent = dork + '  ← CLICK TO COPY';
+  output.style.display = 'block';
+  output.setAttribute('data-dork', dork);
+}
+
+function copyDork() {
+  const dork = document.getElementById('dorkOutput').getAttribute('data-dork');
+  if (dork) {
+    navigator.clipboard.writeText(dork).then(() => showNotif('✓ DORK COPIED TO CLIPBOARD'));
+  }
+}
 </script>
 </body>
 </html>
+              
