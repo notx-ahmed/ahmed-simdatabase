@@ -3,314 +3,548 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🇵🇰 PAK Number to Info Tool | @DEADLINEHERE5</title>
+  <title>🇵🇰 PAK Number to Info Tool | @NOTX_AHMED_</title>
+  <meta name="description" content="Pakistan Mobile Number OSINT Lookup Tool — Live Data">
   <style>
+    :root {
+      --bg-0: #05070d;
+      --bg-1: #0a0f1a;
+      --bg-2: #0d1524;
+      --panel: rgba(13, 21, 36, 0.55);
+      --panel-solid: #0d1524;
+      --border: rgba(0, 136, 255, 0.35);
+      --border-strong: #0088ff;
+      --cyan: #00c3ff;
+      --cyan-soft: #7fdfff;
+      --accent: #00ffcc;
+      --accent-2: #7b5cff;
+      --danger: #ff4d6d;
+      --text-dim: #6f88a8;
+      --glow: 0 0 30px rgba(0, 136, 255, 0.25);
+      --radius: 18px;
+      --font: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    html { scroll-behavior: smooth; }
+
     body {
-      background: #0a0f1a;
-      color: #00c3ff;
-      font-family: 'Courier New', monospace;
+      min-height: 100vh;
+      background:
+        radial-gradient(1200px 600px at 15% -10%, rgba(123, 92, 255, 0.18), transparent 60%),
+        radial-gradient(1000px 700px at 110% 20%, rgba(0, 195, 255, 0.16), transparent 55%),
+        radial-gradient(900px 900px at 50% 120%, rgba(0, 255, 204, 0.12), transparent 55%),
+        var(--bg-0);
+      color: var(--cyan);
+      font-family: var(--font);
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      padding: 20px;
+      padding: 28px 16px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated grid + scanline backdrop */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 136, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 136, 255, 0.06) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at 50% 40%, #000 20%, transparent 85%);
+      animation: gridDrift 22s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0px,
+        rgba(0, 0, 0, 0) 2px,
+        rgba(0, 195, 255, 0.025) 3px,
+        rgba(0, 0, 0, 0) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: screen;
+    }
+
+    @keyframes gridDrift {
+      from { background-position: 0 0, 0 0; }
+      to   { background-position: 44px 44px, 44px 44px; }
+    }
+
+    /* Floating orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.5;
+      z-index: 0;
+      pointer-events: none;
+      animation: float 14s ease-in-out infinite;
+    }
+    .orb.o1 { width: 320px; height: 320px; background: #0088ff; top: -80px; left: -60px; }
+    .orb.o2 { width: 280px; height: 280px; background: #7b5cff; bottom: -90px; right: -60px; animation-delay: -5s; }
+    .orb.o3 { width: 220px; height: 220px; background: #00ffcc; top: 40%; right: 20%; animation-delay: -9s; opacity: 0.3; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -30px) scale(1.08); }
     }
 
     .container {
-      max-width: 900px;
+      position: relative;
+      z-index: 2;
+      max-width: 960px;
       width: 100%;
-      background: #0a0f1a;
-      border: 2px solid #0088ff;
-      border-radius: 16px;
-      box-shadow: 0 0 30px rgba(0, 136, 255, 0.3);
+      background: var(--panel);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow:
+        var(--glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 30px 80px rgba(0, 0, 0, 0.6);
       overflow: hidden;
-      transition: all 0.3s ease;
+      animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(24px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Animated top border beam */
+    .container::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--accent-2), var(--accent), transparent);
+      background-size: 200% 100%;
+      animation: beam 4s linear infinite;
+      z-index: 3;
+    }
+    @keyframes beam {
+      from { background-position: 200% 0; }
+      to   { background-position: -200% 0; }
     }
 
     .header {
-      background: #0a0f1a;
-      padding: 20px;
-      border-bottom: 2px solid #0088ff;
+      position: relative;
+      padding: 30px 24px 26px;
       text-align: center;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(0, 136, 255, 0.08), transparent);
+    }
+
+    .header .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--cyan-soft);
+      border: 1px solid var(--border);
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+      background: rgba(0, 136, 255, 0.06);
+    }
+    .badge .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
     }
 
     .header h1 {
-      font-size: 28px;
-      text-shadow: 0 0 10px #0088ff;
-      letter-spacing: 2px;
+      font-size: clamp(22px, 5vw, 34px);
+      font-weight: 800;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #00c3ff, #7b5cff, #00ffcc, #00c3ff);
+      background-size: 250% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: sheen 6s linear infinite;
+      line-height: 1.2;
+    }
+    @keyframes sheen {
+      from { background-position: 0% 0; }
+      to   { background-position: 250% 0; }
     }
 
     .header p {
-      font-size: 14px;
-      color: #0088ff;
-      margin-top: 5px;
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: 10px;
+      letter-spacing: 1px;
     }
 
-    .input-area {
-      padding: 30px;
-    }
+    .flag { font-size: 26px; vertical-align: middle; }
+
+    .input-area { padding: 28px 24px 8px; }
 
     .input-group {
       display: flex;
-      gap: 15px;
+      gap: 14px;
       flex-wrap: wrap;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
-    .input-group input {
+    .field {
+      position: relative;
       flex: 3;
-      background: #0a0f1a;
-      border: 2px solid #0088ff;
-      padding: 14px;
-      color: #00c3ff;
-      font-family: monospace;
+      min-width: 240px;
+    }
+    .field .icon {
+      position: absolute;
+      left: 16px; top: 50%;
+      transform: translateY(-50%);
       font-size: 16px;
-      border-radius: 8px;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .input-group input {
+      width: 100%;
+      background: rgba(5, 7, 13, 0.6);
+      border: 1px solid var(--border);
+      padding: 16px 16px 16px 44px;
+      color: var(--cyan);
+      font-family: var(--font);
+      font-size: 16px;
+      border-radius: 12px;
       outline: none;
-      transition: 0.2s;
+      transition: all 0.25s ease;
+      letter-spacing: 0.5px;
     }
-
+    .input-group input::placeholder { color: var(--text-dim); }
     .input-group input:focus {
-      box-shadow: 0 0 12px #0088ff;
-      border-color: #00aaff;
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(0, 195, 255, 0.15), 0 0 20px rgba(0, 195, 255, 0.25);
+      background: rgba(5, 7, 13, 0.85);
     }
 
-    .input-group button {
-      flex: 1;
-      background: #0a1a2a;
-      border: 2px solid #0088ff;
-      color: #00c3ff;
-      font-family: monospace;
-      font-weight: bold;
-      padding: 14px 20px;
-      border-radius: 8px;
+    .btn {
+      position: relative;
+      font-family: var(--font);
+      font-weight: 700;
       cursor: pointer;
-      font-size: 16px;
-      transition: all 0.2s;
+      border-radius: 12px;
+      transition: transform 0.15s ease, box-shadow 0.25s ease, background 0.25s ease;
+      border: 1px solid var(--border-strong);
+      overflow: hidden;
+      letter-spacing: 0.5px;
     }
+    .btn:active { transform: scale(0.97); }
+    .btn::after {
+      content: "";
+      position: absolute;
+      top: 0; left: -120%;
+      width: 60%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.5s ease;
+    }
+    .btn:hover::after { left: 130%; }
 
-    .input-group button:hover {
-      background: #0a2a3a;
-      transform: scale(0.98);
-      box-shadow: 0 0 12px #0088ff;
+    .btn-primary {
+      flex: 1;
+      min-width: 140px;
+      background: linear-gradient(135deg, #0088ff, #7b5cff);
+      color: #fff;
+      font-size: 16px;
+      padding: 16px 22px;
+      box-shadow: 0 8px 24px rgba(0, 136, 255, 0.35);
     }
+    .btn-primary:hover { box-shadow: 0 10px 30px rgba(123, 92, 255, 0.5); }
 
     .btn-box {
       display: flex;
       gap: 10px;
-      justify-content: space-between;
       flex-wrap: wrap;
-      margin-top: 10px;
+      margin-bottom: 6px;
     }
-
-    .btn-box button {
+    .btn-ghost {
       flex: 1;
-      background: #0a1a2a;
-      border: 2px solid #0088ff;
-      padding: 10px;
-      border-radius: 8px;
-      color: #00c3ff;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .btn-box button:hover {
-      background: #0a2a3a;
-      box-shadow: 0 0 8px #0088ff;
-    }
-
-    .output {
-      background: #0a0f1a;
-      margin: 0 30px 30px 30px;
-      border: 1px solid #0088ff;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .output-header {
-      background: #0a1a2a;
-      padding: 12px 20px;
-      border-bottom: 1px solid #0088ff;
-      color: #00c3ff;
-      font-size: 14px;
-    }
-
-    .output-content {
-      padding: 20px;
-      color: #00ffcc;
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-family: monospace;
+      min-width: 120px;
+      background: rgba(0, 136, 255, 0.08);
+      color: var(--cyan-soft);
+      padding: 12px;
       font-size: 13px;
-      max-height: 500px;
-      overflow-y: auto;
     }
-
-    .credit {
-      text-align: center;
-      padding: 15px;
-      border-top: 1px solid #0088ff;
-      color: #0088ff;
-      font-size: 12px;
+    .btn-ghost:hover {
+      background: rgba(0, 136, 255, 0.18);
+      box-shadow: 0 0 14px rgba(0, 136, 255, 0.4);
     }
 
     .status {
-      margin-top: 10px;
-      font-size: 12px;
-      color: #00ccff;
+      margin: 14px 2px 4px;
+      font-size: 12.5px;
+      color: var(--cyan-soft);
+      min-height: 18px;
       text-align: center;
+      letter-spacing: 0.5px;
+    }
+    .status.loading { animation: blink 1s ease-in-out infinite; }
+    .status.error { color: var(--danger); }
+    .status.ok { color: var(--accent); }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .output {
+      margin: 12px 24px 24px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(5, 7, 13, 0.55);
+    }
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--cyan-soft);
+      font-size: 13px;
+      letter-spacing: 1px;
+      background: rgba(0, 136, 255, 0.06);
+    }
+    .win-dots { display: flex; gap: 7px; }
+    .win-dots span { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+    .win-dots .r { background: #ff5f57; }
+    .win-dots .y { background: #febc2e; }
+    .win-dots .g { background: #28c840; }
+
+    .output-content {
+      padding: 20px;
+      color: var(--accent);
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.7;
+      max-height: 520px;
+      overflow-y: auto;
+      tab-size: 2;
+    }
+    .output-content::-webkit-scrollbar { width: 10px; }
+    .output-content::-webkit-scrollbar-track { background: transparent; }
+    .output-content::-webkit-scrollbar-thumb {
+      background: rgba(0, 136, 255, 0.3);
+      border-radius: 999px;
+    }
+    .output-content::-webkit-scrollbar-thumb:hover { background: rgba(0, 136, 255, 0.5); }
+
+    /* JSON syntax highlight */
+    .tok-key { color: #7b9dff; }
+    .tok-str { color: #00ffcc; }
+    .tok-num { color: #ffb86c; }
+    .tok-bool { color: #ff79c6; }
+    .tok-null { color: #ff5555; }
+    .tok-punc { color: #6f88a8; }
+
+    .credit {
+      text-align: center;
+      padding: 18px;
+      border-top: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 12px;
+      letter-spacing: 1px;
+      background: linear-gradient(0deg, rgba(0, 136, 255, 0.05), transparent);
+    }
+    .credit b {
+      color: var(--cyan);
+      text-shadow: 0 0 8px rgba(0, 195, 255, 0.5);
     }
 
-    .flag {
-      font-size: 24px;
-      vertical-align: middle;
-    }
-
-    @keyframes blink {
-      0% { opacity: 0.6; }
-      100% { opacity: 1; }
-    }
-
-    .loading {
-      animation: blink 1s infinite;
+    @media (max-width: 560px) {
+      .input-group input { font-size: 15px; }
+      .btn-primary, .btn-ghost { min-width: 100%; }
+      .header { padding: 24px 16px; }
+      .output { margin: 12px 16px 20px; }
+      .input-area { padding: 22px 16px 8px; }
     }
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <h1><span class="flag">🇵🇰 </span>𝖕𝖆𝖐 𝖓𝖚𝖒𝖇𝖊𝖗 𝖙𝖔 𝖎𝖓𝖋𝖔 𝖙𝖔𝖔𝖑<span class="flag"> ⚠ </span></h1>
-    <p>Pakistan Mobile Number OSINT | Live Data</p>
-  </div>
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
 
-  <div class="input-area">
-    <div class="input-group">
-      <input type="text" id="number" placeholder="Enter Pakistan number (e.g., 923078750447 or 03078750447)" autocomplete="off">
-      <button id="lookupBtn">🔍 LOOKUP</button>
+  <div class="container">
+    <div class="header">
+      <span class="badge"><span class="dot"></span> Live OSINT · Online</span>
+      <h1><span class="flag">🇵🇰</span> PAK Number to Info <span class="flag">⚡</span></h1>
+      <p>Pakistan Mobile Number OSINT &nbsp;·&nbsp; Real-time Lookup</p>
     </div>
-    <div class="btn-box">
-      <button id="copyBtn">📋 COPY JSON</button>
-      <button id="clearBtn">🗑️ CLEAR</button>
-      <button id="exampleBtn">📝 EXAMPLE</button>
+
+    <div class="input-area">
+      <div class="input-group">
+        <div class="field">
+          <span class="icon">📞</span>
+          <input type="text" id="number" placeholder="e.g. 923078750447 or 03078750447" autocomplete="off" spellcheck="false">
+        </div>
+        <button id="lookupBtn" class="btn btn-primary">🔍 LOOKUP</button>
+      </div>
+      <div class="btn-box">
+        <button id="copyBtn" class="btn btn-ghost">📋 COPY JSON</button>
+        <button id="clearBtn" class="btn btn-ghost">🗑️ CLEAR</button>
+        <button id="exampleBtn" class="btn btn-ghost">📝 EXAMPLE</button>
+      </div>
+      <div id="status" class="status"></div>
     </div>
-    <div id="status" class="status"></div>
+
+    <div class="output">
+      <div class="output-header">
+        <span class="win-dots"><span class="r"></span><span class="y"></span><span class="g"></span></span>
+        <span>📟 JSON OUTPUT</span>
+      </div>
+      <div class="output-content" id="output">[*] Ready. Enter a Pakistan number and click LOOKUP.</div>
+    </div>
+
+    <div class="credit">⦿ Powered by ┇ <b>@NOTX_AHMED_</b></div>
   </div>
 
-  <div class="output">
-    <div class="output-header">📟 JSON OUTPUT</div>
-    <div class="output-content" id="output">[*] Ready. Enter a Pakistan number and click LOOKUP.</div>
-  </div>
+  <script>
+    const BASE_URL = "https://api-server-virid-two.vercel.app/number=";
+    let lastJSON = null;
 
-  <div class="credit">
-    ⦿ Powered by ┇ @NOTX_AHMED_
-  </div>
-</div>
+    const $ = (id) => document.getElementById(id);
+    const outputDiv = $('output');
+    const statusDiv = $('status');
 
-<script>
-  const BASE_URL = "https://api-server-virid-two.vercel.app/number=";
-  let lastJSON = null;
-
-  function formatNumber(raw) {
-    let num = raw.replace(/\D/g, '');
-    if (num.startsWith('92') && num.length === 12) return num;
-    if (num.length === 10) return '92' + num;
-    if (num.length === 11 && num.startsWith('0')) return '92' + num.slice(1);
-    return num;
-  }
-
-  async function lookup() {
-    const input = document.getElementById('number').value.trim();
-    const outputDiv = document.getElementById('output');
-    const statusDiv = document.getElementById('status');
-
-    if (!input) {
-      outputDiv.innerHTML = '{"error": "Enter a Pakistan number"}';
-      statusDiv.innerHTML = '';
-      return;
+    function setStatus(msg, type = '') {
+      statusDiv.textContent = msg;
+      statusDiv.className = 'status' + (type ? ' ' + type : '');
     }
 
-    let formatted = formatNumber(input);
-    if (!formatted.startsWith('92') || formatted.length !== 12) {
-      outputDiv.innerHTML = '{"error": "Invalid Pakistan number. Use format like 923078750447 or 03078750447"}';
-      statusDiv.innerHTML = '';
-      return;
+    function formatNumber(raw) {
+      let num = raw.replace(/\D/g, '');
+      if (num.startsWith('92') && num.length === 12) return num;
+      if (num.length === 10) return '92' + num;
+      if (num.length === 11 && num.startsWith('0')) return '92' + num.slice(1);
+      return num;
     }
 
-    outputDiv.innerHTML = '{"status": "fetching..."}';
-    statusDiv.innerHTML = '⏳ Fetching data...';
-    statusDiv.className = 'status loading';
+    // Lightweight JSON syntax highlighter
+    function highlightJSON(obj) {
+      const json = JSON.stringify(obj, null, 2);
+      return json.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]))
+        .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)/g,
+          (match) => {
+            let cls = 'tok-num';
+            if (/^"/.test(match)) {
+              cls = /:$/.test(match) ? 'tok-key' : 'tok-str';
+            } else if (/true|false/.test(match)) {
+              cls = 'tok-bool';
+            } else if (/null/.test(match)) {
+              cls = 'tok-null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+          })
+        .replace(/([{}\[\],])/g, '<span class="tok-punc">$1</span>');
+    }
 
-    try {
-      const url = BASE_URL + formatted;
-      const res = await fetch(url);
-      let data = await res.json();
+    function renderJSON(obj) {
+      outputDiv.innerHTML = highlightJSON(obj);
+    }
 
-      // Clean up unwanted credits
-      delete data.Credit;
-      delete data.Developer;
-      // Remove data_source if needed (optional)
-      if (data.data) delete data.data.data_source;
-      if (data.data && data.data.records) {
-        data.data.records.forEach(rec => {
-          delete rec.source; // if any
-        });
+    async function lookup() {
+      const input = $('number').value.trim();
+
+      if (!input) {
+        renderJSON({ error: "Enter a Pakistan number" });
+        setStatus('⚠ No number entered', 'error');
+        return;
       }
 
-      // Add our credit
-      data.credit = "@NOTX_AHMED_";
+      const formatted = formatNumber(input);
+      if (!formatted.startsWith('92') || formatted.length !== 12) {
+        renderJSON({ error: "Invalid Pakistan number. Use format like 923078750447 or 03078750447" });
+        setStatus('❌ Invalid number format', 'error');
+        return;
+      }
 
-      lastJSON = data;
-      outputDiv.innerHTML = JSON.stringify(data, null, 2);
-      statusDiv.innerHTML = '✅ Lookup complete | @NOTX_AHMED_';
-      statusDiv.className = 'status';
-    } catch (err) {
-      outputDiv.innerHTML = JSON.stringify({ error: err.message, credit: "@NOTX_AHMED_" }, null, 2);
-      statusDiv.innerHTML = '❌ Network error | @NOTX_AHMED_';
-      statusDiv.className = 'status';
+      outputDiv.textContent = '{ "status": "fetching..." }';
+      setStatus('⏳ Fetching data...', 'loading');
+
+      try {
+        const res = await fetch(BASE_URL + formatted);
+        const data = await res.json();
+
+        // Clean up unwanted credits
+        delete data.Credit;
+        delete data.Developer;
+        if (data.data) delete data.data.data_source;
+        if (data.data && data.data.records) {
+          data.data.records.forEach(rec => { delete rec.source; });
+        }
+
+        data.credit = "@NOTX_AHMED_";
+        lastJSON = data;
+        renderJSON(data);
+        setStatus('✅ Lookup complete · @NOTX_AHMED_', 'ok');
+      } catch (err) {
+        renderJSON({ error: err.message, credit: "@NOTX_AHMED_" });
+        setStatus('❌ Network error · @NOTX_AHMED_', 'error');
+      }
     }
-  }
 
-  function copyJSON() {
-    if (!lastJSON) {
-      alert('No data to copy. Do a lookup first.');
-      return;
+    function copyJSON() {
+      if (!lastJSON) {
+        setStatus('⚠ No data to copy. Run a lookup first.', 'error');
+        return;
+      }
+      navigator.clipboard.writeText(JSON.stringify(lastJSON, null, 2))
+        .then(() => {
+          setStatus('📋 JSON copied to clipboard!', 'ok');
+          setTimeout(() => {
+            if (statusDiv.textContent.includes('copied')) setStatus('');
+          }, 2000);
+        })
+        .catch(() => setStatus('❌ Failed to copy.', 'error'));
     }
-    const jsonStr = JSON.stringify(lastJSON, null, 2);
-    navigator.clipboard.writeText(jsonStr).then(() => {
-      const statusDiv = document.getElementById('status');
-      statusDiv.innerHTML = '📋 JSON copied to clipboard! | @NOTX_AHMED_';
-      setTimeout(() => {
-        if (statusDiv.innerHTML.includes('copied')) statusDiv.innerHTML = '';
-      }, 2000);
-    }).catch(() => alert('Failed to copy.'));
-  }
 
-  function clearAll() {
-    document.getElementById('number').value = '';
-    document.getElementById('output').innerHTML = '[*] Ready.';
-    lastJSON = null;
-    document.getElementById('status').innerHTML = '';
-  }
+    function clearAll() {
+      $('number').value = '';
+      outputDiv.textContent = '[*] Ready. Enter a Pakistan number and click LOOKUP.';
+      lastJSON = null;
+      setStatus('');
+      $('number').focus();
+    }
 
-  function example() {
-    document.getElementById('number').value = '923078750447';
-    lookup();
-  }
+    function example() {
+      $('number').value = '923078750447';
+      lookup();
+    }
 
-  document.getElementById('lookupBtn').addEventListener('click', lookup);
-  document.getElementById('copyBtn').addEventListener('click', copyJSON);
-  document.getElementById('clearBtn').addEventListener('click', clearAll);
-  document.getElementById('exampleBtn').addEventListener('click', example);
-  document.getElementById('number').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') lookup();
-  });
-</script>
+    $('lookupBtn').addEventListener('click', lookup);
+    $('copyBtn').addEventListener('click', copyJSON);
+    $('clearBtn').addEventListener('click', clearAll);
+    $('exampleBtn').addEventListener('click', example);
+    $('number').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') lookup();
+    });
+  </script>
 </body>
 </html>
