@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🇵🇰 PAK Number to Info Tool | @NOTX_AHMED_</title>
   <meta name="description" content="Pakistan Mobile Number OSINT Lookup Tool — Live Data">
+  <script>
+    // Apply saved/preferred theme before paint to avoid a flash
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var prefersLight = window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: light)').matches;
+        document.documentElement.setAttribute('data-theme', saved || (prefersLight ? 'light' : 'dark'));
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <style>
     :root {
       --bg-0: #05070d;
@@ -23,6 +36,56 @@
       --glow: 0 0 30px rgba(0, 136, 255, 0.25);
       --radius: 18px;
       --font: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      --input-bg: rgba(5, 7, 13, 0.6);
+      --input-bg-focus: rgba(5, 7, 13, 0.85);
+      --code-bg: rgba(5, 7, 13, 0.55);
+      --body-bg:
+        radial-gradient(1200px 600px at 15% -10%, rgba(123, 92, 255, 0.18), transparent 60%),
+        radial-gradient(1000px 700px at 110% 20%, rgba(0, 195, 255, 0.16), transparent 55%),
+        radial-gradient(900px 900px at 50% 120%, rgba(0, 255, 204, 0.12), transparent 55%),
+        var(--bg-0);
+      --grid-line: rgba(0, 136, 255, 0.06);
+      --orb-opacity: 0.5;
+      --tok-key: #7b9dff;
+      --tok-str: #00ffcc;
+      --tok-num: #ffb86c;
+      --tok-bool: #ff79c6;
+      --tok-null: #ff5555;
+      --tok-punc: #6f88a8;
+    }
+
+    /* ===== Light theme ===== */
+    :root[data-theme="light"] {
+      --bg-0: #e8eef7;
+      --bg-1: #f4f7fc;
+      --bg-2: #ffffff;
+      --panel: rgba(255, 255, 255, 0.72);
+      --panel-solid: #ffffff;
+      --border: rgba(0, 90, 180, 0.22);
+      --border-strong: #0066cc;
+      --cyan: #0c3b63;
+      --cyan-soft: #0a5c8a;
+      --accent: #0a7d5a;
+      --accent-2: #5a3ec8;
+      --danger: #c62847;
+      --text-dim: #5a7089;
+      --glow: 0 0 30px rgba(0, 120, 255, 0.12);
+      --input-bg: rgba(255, 255, 255, 0.9);
+      --input-bg-focus: #ffffff;
+      --code-bg: rgba(238, 244, 255, 0.92);
+      --body-bg:
+        radial-gradient(1200px 600px at 15% -10%, rgba(123, 92, 255, 0.14), transparent 60%),
+        radial-gradient(1000px 700px at 110% 20%, rgba(0, 150, 255, 0.14), transparent 55%),
+        radial-gradient(900px 900px at 50% 120%, rgba(0, 200, 160, 0.12), transparent 55%),
+        var(--bg-0);
+      --grid-line: rgba(0, 90, 180, 0.06);
+      --orb-opacity: 0.28;
+      --tok-key: #2b5fd0;
+      --tok-str: #0a7d5a;
+      --tok-num: #b25a00;
+      --tok-bool: #c0298a;
+      --tok-null: #c62847;
+      --tok-punc: #5a7089;
     }
 
     * {
@@ -35,11 +98,7 @@
 
     body {
       min-height: 100vh;
-      background:
-        radial-gradient(1200px 600px at 15% -10%, rgba(123, 92, 255, 0.18), transparent 60%),
-        radial-gradient(1000px 700px at 110% 20%, rgba(0, 195, 255, 0.16), transparent 55%),
-        radial-gradient(900px 900px at 50% 120%, rgba(0, 255, 204, 0.12), transparent 55%),
-        var(--bg-0);
+      background: var(--body-bg);
       color: var(--cyan);
       font-family: var(--font);
       display: flex;
@@ -48,6 +107,7 @@
       padding: 28px 16px;
       overflow-x: hidden;
       position: relative;
+      transition: color 0.35s ease;
     }
 
     /* Animated grid + scanline backdrop */
@@ -56,8 +116,8 @@
       position: fixed;
       inset: 0;
       background-image:
-        linear-gradient(rgba(0, 136, 255, 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 136, 255, 0.06) 1px, transparent 1px);
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
       background-size: 44px 44px;
       mask-image: radial-gradient(circle at 50% 40%, #000 20%, transparent 85%);
       animation: gridDrift 22s linear infinite;
@@ -91,7 +151,7 @@
       position: fixed;
       border-radius: 50%;
       filter: blur(60px);
-      opacity: 0.5;
+      opacity: var(--orb-opacity);
       z-index: 0;
       pointer-events: none;
       animation: float 14s ease-in-out infinite;
@@ -144,6 +204,12 @@
       to   { background-position: -200% 0; }
     }
 
+    .container,
+    .input-group input,
+    .output,
+    .header,
+    .credit { transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease; }
+
     .header {
       position: relative;
       padding: 30px 24px 26px;
@@ -151,6 +217,41 @@
       border-bottom: 1px solid var(--border);
       background: linear-gradient(180deg, rgba(0, 136, 255, 0.08), transparent);
     }
+
+    /* Theme toggle */
+    .theme-toggle {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--cyan-soft);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      z-index: 4;
+      transition: all 0.25s ease;
+    }
+    .theme-toggle:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 14px rgba(0, 136, 255, 0.35);
+    }
+    .theme-toggle:active { transform: scale(0.95); }
+    .theme-toggle .tt-icon { font-size: 15px; line-height: 1; }
+    /* Icon + label reflect the currently active theme */
+    .theme-toggle .tt-sun { display: none; }
+    .theme-toggle .tt-moon { display: inline; }
+    :root[data-theme="light"] .theme-toggle .tt-sun { display: inline; }
+    :root[data-theme="light"] .theme-toggle .tt-moon { display: none; }
+    .theme-toggle .tt-label::after { content: "Dark"; }
+    :root[data-theme="light"] .theme-toggle .tt-label::after { content: "Light"; }
 
     .header .badge {
       display: inline-flex;
@@ -227,7 +328,7 @@
     }
     .input-group input {
       width: 100%;
-      background: rgba(5, 7, 13, 0.6);
+      background: var(--input-bg);
       border: 1px solid var(--border);
       padding: 16px 16px 16px 44px;
       color: var(--cyan);
@@ -242,7 +343,7 @@
     .input-group input:focus {
       border-color: var(--cyan);
       box-shadow: 0 0 0 3px rgba(0, 195, 255, 0.15), 0 0 20px rgba(0, 195, 255, 0.25);
-      background: rgba(5, 7, 13, 0.85);
+      background: var(--input-bg-focus);
     }
 
     .btn {
@@ -316,7 +417,7 @@
       border: 1px solid var(--border);
       border-radius: 14px;
       overflow: hidden;
-      background: rgba(5, 7, 13, 0.55);
+      background: var(--code-bg);
     }
     .output-header {
       display: flex;
@@ -356,12 +457,12 @@
     .output-content::-webkit-scrollbar-thumb:hover { background: rgba(0, 136, 255, 0.5); }
 
     /* JSON syntax highlight */
-    .tok-key { color: #7b9dff; }
-    .tok-str { color: #00ffcc; }
-    .tok-num { color: #ffb86c; }
-    .tok-bool { color: #ff79c6; }
-    .tok-null { color: #ff5555; }
-    .tok-punc { color: #6f88a8; }
+    .tok-key { color: var(--tok-key); }
+    .tok-str { color: var(--tok-str); }
+    .tok-num { color: var(--tok-num); }
+    .tok-bool { color: var(--tok-bool); }
+    .tok-null { color: var(--tok-null); }
+    .tok-punc { color: var(--tok-punc); }
 
     .credit {
       text-align: center;
@@ -393,6 +494,10 @@
 
   <div class="container">
     <div class="header">
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle color theme">
+        <span class="tt-icon tt-moon">🌙</span><span class="tt-icon tt-sun">☀️</span>
+        <span class="tt-label"></span>
+      </button>
       <span class="badge"><span class="dot"></span> Live OSINT · Online</span>
       <h1><span class="flag">🇵🇰</span> PAK Number to Info <span class="flag">⚡</span></h1>
       <p>Pakistan Mobile Number OSINT &nbsp;·&nbsp; Real-time Lookup</p>
@@ -430,6 +535,14 @@
     let lastJSON = null;
 
     const $ = (id) => document.getElementById(id);
+
+    /* ===== Theme handling (initial theme is applied in <head> to avoid flash) ===== */
+    function toggleTheme() {
+      const root = document.documentElement;
+      const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+    }
     const outputDiv = $('output');
     const statusDiv = $('status');
 
@@ -538,6 +651,7 @@
       lookup();
     }
 
+    $('themeToggle').addEventListener('click', toggleTheme);
     $('lookupBtn').addEventListener('click', lookup);
     $('copyBtn').addEventListener('click', copyJSON);
     $('clearBtn').addEventListener('click', clearAll);
